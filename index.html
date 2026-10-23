@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a7983">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Anglais">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<title>Exercices d'anglais</title>
+<style>
+@font-face{font-family:'Bricolage Grotesque';src:url(fonts/bricolage.woff2) format('woff2');font-weight:200 800;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url(fonts/plex-sans-400.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url(fonts/plex-sans-500.woff2) format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url(fonts/plex-sans-600.woff2) format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url(fonts/plex-mono-400.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url(fonts/plex-mono-500.woff2) format('woff2');font-weight:500;font-display:swap}
+/* Layout: one column notebook. Three tabs (Vocabulaire, Temps et verbes, Mes progrès). Config opens under the chosen fiche. Quiz = one card at a time. */
+:root{
+  --bg:#f1f5f7; --surface:#ffffff; --fg:#13202a; --muted:#566874; --line:#d6e0e5;
+  --accent:#0a7983; --accent-fg:#ffffff; --accent-soft:#dcf0f1;
+  --ok:#1b7a4a; --ok-soft:#dcf3e6; --bad:#b3364a; --bad-soft:#f9e2e6; --mid:#c9a227;
+  --font-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1a21; --surface:#15252e; --fg:#e5eef2; --muted:#93a8b3; --line:#27404c;
+  --accent:#52c4cd; --accent-fg:#06262a; --accent-soft:#16363d;
+  --ok:#5fd394; --ok-soft:#163a29; --bad:#ff8a9b; --bad-soft:#42202a; --mid:#e0bd45; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1a21; --surface:#15252e; --fg:#e5eef2; --muted:#93a8b3; --line:#27404c;
+  --accent:#52c4cd; --accent-fg:#06262a; --accent-soft:#16363d;
+  --ok:#5fd394; --ok-soft:#163a29; --bad:#ff8a9b; --bad-soft:#42202a; --mid:#e0bd45; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--font-body);
+  padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--font-display);margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(1.9rem,6vw,2.6rem);font-weight:700;letter-spacing:-.01em}
+.eyebrow{font:500 .75rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--muted);margin:8px 0 0;max-width:60ch}
+.nav{display:flex;gap:6px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.tab{flex:1;padding:10px 8px;border:0;border-radius:7px;background:transparent;color:var(--muted);font:600 .92rem var(--font-body);cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.sync{margin:-12px 0 0;font:500 .72rem var(--font-mono);color:var(--muted)}
+#home,#stats{display:flex;flex-direction:column;gap:24px}
+.group{display:flex;flex-direction:column;gap:8px}
+.group>h2,.sec h2{font:500 .75rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-bottom:4px;border-bottom:1px solid var(--line)}
+.deck{display:grid;grid-template-columns:1fr auto;gap:2px 12px;text-align:left;width:100%;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:inherit;font:inherit;cursor:pointer}
+.deck:hover{border-color:var(--accent)}
+.deck[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.deck h3{font-size:1.05rem;font-weight:700}
+.deck p{margin:0;color:var(--muted);font-size:.9rem;grid-column:1}
+.deck .meta{grid-column:2;grid-row:1 / span 2;align-self:center;text-align:right;font:500 .75rem var(--font-mono);color:var(--muted)}
+.deck .meta b{display:block;font-size:1.1rem;color:var(--fg)}
+.deck .mini{grid-column:1 / -1;margin-top:8px}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.config{background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px}
+.config h4{margin:0 0 8px;font:500 .75rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:500 .9rem var(--font-body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn{padding:12px 20px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);font:600 1rem var(--font-body);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hint{font:.85rem var(--font-mono);color:var(--muted)}
+/* memo */
+details.memo{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+details.memo summary{cursor:pointer;font:600 1rem var(--font-body)}
+.scroll{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.88rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .72rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td:first-child{font-weight:600;white-space:nowrap}
+/* quiz */
+.quiz,.result{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;font:500 .8rem var(--font-mono);color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.tag{display:inline-block;font:500 .72rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.prompt{font:700 clamp(1.4rem,5vw,1.9rem)/1.25 var(--font-display);overflow-wrap:anywhere}
+.sub{color:var(--muted);margin:-6px 0 0}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;padding:14px 16px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.ok{background:var(--ok-soft);border-color:var(--ok)}
+.opt.bad{background:var(--bad-soft);border-color:var(--bad)}
+.opt:disabled{cursor:default;color:var(--fg)}
+.fields{display:grid;gap:12px}
+.field label{display:block;font:500 .75rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.field input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:1.1rem var(--font-body)}
+.field input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.field input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.fb{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.fb.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.fb.bad{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.fb b{font-weight:600}
+.fb div{margin-top:4px}
+.fb .ex{color:var(--muted);font-size:.9rem}
+.score{font:700 clamp(2.6rem,12vw,4rem)/1 var(--font-display)}
+.score small{font-size:.4em;color:var(--muted);font-weight:500}
+.miss{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.miss li{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.miss .q{font-weight:600;overflow-wrap:anywhere}
+.miss .a{color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}
+/* stats */
+.sec{display:flex;flex-direction:column;gap:12px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.tile b{display:block;font:700 1.8rem/1.1 var(--font-display);font-variant-numeric:tabular-nums}
+.tile span{font:500 .72rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line)}
+.stack i{display:block;height:100%}
+.s-m{background:var(--ok)} .s-l{background:var(--accent)} .s-w{background:var(--bad)}
+.dk{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.dk .t{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.dk .t span:last-child{font:500 .78rem var(--font-mono);color:var(--muted);white-space:nowrap}
+.dk .lg{font:.75rem var(--font-mono);color:var(--muted)}
+.chart{display:flex;align-items:flex-end;gap:4px;height:110px;padding:8px 8px 0;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.chart div{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;height:100%}
+.chart i{display:block;width:100%;max-width:26px;border-radius:3px 3px 0 0;min-height:3px}
+.chart small{font:.62rem var(--font-mono);color:var(--muted)}
+.hist{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.hist li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;padding:10px 14px;border-bottom:1px solid var(--line)}
+.hist li:last-child{border-bottom:0}
+.hist .d{font:.75rem var(--font-mono);color:var(--muted)}
+.hist .n{overflow-wrap:anywhere}
+.hist .n small{display:block;color:var(--muted);font-size:.8rem}
+.hist .p{font:600 .95rem var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:16px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Révision · 4 fiches</div>
+    <h1>Exercices d'anglais</h1>
+    <p class="lead">Vocabulaire de tes fiches TEDx, thèse et 1000 mots, exercices sur les temps et les verbes, et suivi de tes progrès. Les questions déjà vues reviennent en dernier, tes erreurs reviennent en premier.</p>
+  </header>
+  <nav class="nav" id="nav" aria-label="Sections"></nav>
+  <p class="sync" id="sync"></p>
+  <section id="home"></section>
+  <section id="stats" hidden></section>
+  <section id="quiz" hidden></section>
+  <section id="result" hidden></section>
+</main>
+
+<script>
+const DECKS = [
+{ id:'tedx', group:'Fiche TEDx', title:'Mots des talks TEDx', desc:'Vocabulaire tiré des talks : curiosité, sport, santé, société.', kind:'vocab', items:[
+['to drop out','abandonner ses études','He decided to drop out of college.','drop out'],
+['relentless','incessant, acharné','Her relentless questioning surprised everyone.'],
+['innate','inné','Curiosity is innate in children.'],
+['wisdom','sagesse','Wisdom comes with age.'],
+['to keep track of','garder une trace de','It is hard to keep track of every expense.','keep track of'],
+['to afford','avoir les moyens de','I can\'t afford a new bike.','afford'],
+['headwind','vent de face','We rode into a strong headwind.'],
+['gear','équipement, matériel','Check your gear before the race.'],
+['to get along','bien s\'entendre','Do you get along with your teammates?','get along'],
+['sedentary lifestyle','mode de vie sédentaire','A sedentary lifestyle increases health risks.'],
+['boundaries','limites','Set clear boundaries at work.'],
+['workout','séance de sport','That workout was really hard.'],
+['to hit (a target)','atteindre un objectif, tenir un temps','I couldn\'t hit my target time.','hit'],
+['crappy','nul, pourri (familier)','I had a crappy day.'],
+['unsustainable','intenable, non viable','This pace is unsustainable.'],
+['bedrock','socle, fondement','Trust is the bedrock of any team.'],
+['portmanteau','mot-valise','Brunch is a portmanteau of breakfast and lunch.'],
+['teeming','fourmillant, grouillant','The market was teeming with people.'],
+['glimpse','aperçu, coup d\'œil','I caught a glimpse of the summit.'],
+['craving','envie intense, fringale','I have a craving for chocolate.'],
+['somewhat','plus ou moins, assez','The result was somewhat surprising.'],
+['brisk pace','rythme soutenu','She walked at a brisk pace.'],
+['to ease','atténuer, apaiser','This cream will ease the pain.','ease'],
+['egregious','flagrant, grossier','That was an egregious error.'],
+['to outstrip','dépasser, surpasser','Demand has outstripped supply.','outstripped'],
+['to tackle','s\'attaquer à (un problème)','We need to tackle this problem.','tackle'],
+['stubborn','têtu, obstiné','My brother is very stubborn.'],
+['policy','politique, règlement','The school has a strict no-phone policy.'],
+['a mere','simple, à peine','It costs a mere five dollars.','mere'],
+['affordable','abordable','We need affordable housing.'],
+['misnomer','appellation impropre, abus de langage','"Mobile home" is a misnomer.'],
+['to lack','manquer de','The team lacks experience.','lacks'],
+['throughout','tout au long de, partout dans','It rained throughout the day.'],
+['meanwhile','pendant ce temps, entre-temps','Meanwhile, the kids were playing.'],
+['to trigger','déclencher, provoquer','Stress can trigger headaches.','trigger'],
+['to befriend pain','apprivoiser la douleur','She learned to befriend pain during long races.','befriend pain'],
+['dichotomy','dichotomie','This is a false dichotomy.'],
+['to spawn','engendrer, donner naissance à','One question can spawn many more.','spawn']
+]},
+{ id:'these', group:'Fiche thèse', title:'Vocabulaire de la thèse', desc:'Politiques publiques, sport-santé, éducation, méthodologie, cadres théoriques.', kind:'vocab', items:[
+['policy implementation','mise en œuvre de la politique','Policy implementation is the central issue of this thesis.'],
+['implementation gap','écart entre prescrit et réalisé','There is an implementation gap between policy goals and classroom practice.'],
+['policy-maker','décideur public','Policy-makers often underestimate local constraints.','policy-makers'],
+['stakeholder','partie prenante','Every stakeholder was consulted before the reform.'],
+['steering','pilotage','The steering of the education system is shared between several bodies.'],
+['accountability','redevabilité','Teachers face growing accountability for pupils\' results.'],
+['street-level bureaucrat','bureaucrate de guichet','Teachers are street-level bureaucrats who adapt rules every day.','street-level bureaucrats'],
+['discretion','pouvoir discrétionnaire, marge d\'appréciation','Teachers exercise discretion in how they apply guidelines.'],
+['buy-in','adhésion','Without teacher buy-in, the programme stalls.'],
+['to scale up','généraliser, passer à l\'échelle','The pilot was scaled up to all primary schools.','scaled up'],
+['uptake','appropriation (d\'une politique)','The uptake of the guidelines was uneven across schools.'],
+['steering committee','comité de pilotage','The steering committee meets every term.'],
+['capacity building','renforcement des capacités','Community capacity building takes time.'],
+['wicked problem','problème pernicieux','Obesity is often described as a wicked problem.'],
+['physical literacy','littératie physique','Physical literacy starts in primary school.'],
+['sedentary behaviour','comportement sédentaire','Sedentary behaviour increases health risks.'],
+['grassroots sport','sport de base, sport amateur','Grassroots sport relies heavily on volunteers.'],
+['registered member','licencié','The club has two hundred registered members.','registered members'],
+['barrier to participation','frein à l\'entrée dans la pratique','Cost is a major barrier to participation.'],
+['enabler','levier, facteur facilitant','Peer support is an important enabler of activity.'],
+['initial teacher education','formation initiale','Initial teacher education includes very few hours of PE.'],
+['in-service training','formation continue','In-service training helps teachers update their practices.'],
+['curriculum','programme d\'enseignement','The curriculum sets out the expected learning in PE.'],
+['learning outcomes','acquis d\'apprentissage','Learning outcomes are assessed at the end of the module.'],
+['blended learning','formation hybride','Blended learning combines face-to-face and online sessions.'],
+['instructional design','ingénierie de formation','Instructional design starts with the learners\' needs.'],
+['action research','recherche-action','Action research involves practitioners in the study.'],
+['fieldwork','travail de terrain','Fieldwork took place between March and June.'],
+['purposive sampling','échantillonnage raisonné','We used purposive sampling to select experienced teachers.'],
+['informed consent','consentement éclairé','Informed consent was obtained before each interview.'],
+['saturation','saturation','Saturation was reached after twenty-two interviews.'],
+['triangulation','triangulation','Triangulation increases the credibility of the results.'],
+['reflexivity','réflexivité','Reflexivity is essential in action research.'],
+['stance','posture (du chercheur)','The researcher adopts a neutral stance.'],
+['findings','résultats (d\'une étude)','The findings suggest a gap between policy and practice.'],
+['to cross-check','recouper','I cross-checked the interviews with official documents.','cross-checked'],
+['grey literature','littérature grise','Grey literature was searched using two databases.'],
+['risk factor','facteur de risque','Screen time is a risk factor for inactivity.'],
+['mediating role','rôle médiateur','Self-compassion plays a mediating role.'],
+['programme theory','théorie du programme','The programme theory explains why an intervention should work.'],
+['affordance','potentialité d\'usage','The affordances of the platform shaped how teachers used it.','affordances'],
+['organisational learning','apprentissage organisationnel','Organisational learning requires time and trust.'],
+['reflective practitioner','praticien réflexif','The reflective practitioner learns from daily experience.'],
+['embodiment','incorporation, corporéité','Embodiment is central to the anthropology of the body.'],
+['practitioner-researcher','praticien-chercheur','As a practitioner-researcher, I work inside the system I study.'],
+['literature review','revue de littérature','The literature review covers fifty articles.'],
+['semi-structured interviews','entretiens semi-directifs','I adopt a qualitative approach, based on semi-structured interviews.'],
+]},
+{ id:'sport', group:'Fiche 1000 mots', title:'Sport et entraînement', desc:'Disciplines, matériel, séances, compétition.', kind:'vocab', items:[
+['windsurfing','planche à voile','We went windsurfing at the lagoon.'],
+['wetsuit','combinaison de plongée','The water is cold, so I wear a wetsuit.'],
+['goggles','lunettes de natation','I forgot my goggles.'],
+['fins','palmes','Fins help you swim faster.'],
+['paddle','pagaie','Hold the paddle with both hands.'],
+['outrigger canoe','pirogue à balancier','The outrigger canoe glided across the bay.'],
+['heart rate monitor','cardiofréquencemètre','My heart rate monitor shows 150.'],
+['stopwatch','chronomètre','He started the stopwatch.'],
+['trainers','baskets','I need new trainers for running.'],
+['pitch','terrain (football, rugby)','The pitch was wet.'],
+['warm-up','échauffement','Never skip the warm-up.'],
+['cool-down','retour au calme','The cool-down lasts ten minutes.'],
+['stretching','étirements','Stretching prevents injuries.'],
+['endurance','endurance','Endurance takes months to build.'],
+['stamina','résistance, énergie tenue','He has great stamina.'],
+['pace','allure','I kept a steady pace.'],
+['lap','tour (de piste, de bassin)','Swim four laps.','laps'],
+['rep','répétition','Do ten reps.','reps'],
+['set','série','Three sets of ten reps.','sets'],
+['cramp','crampe','I got a cramp in my leg.'],
+['sprain','entorse','She has a sprained ankle.','sprained'],
+['injury','blessure','He is recovering from an injury.'],
+['referee','arbitre','The referee blew the whistle.'],
+['opponent','adversaire','Her opponent was strong.'],
+['spectator','spectateur','Spectators cheered loudly.','spectators'],
+['defeat','défaite','We accepted the defeat.'],
+['draw','match nul','The match ended in a draw.'],
+['finish line','ligne d\'arrivée','She crossed the finish line first.'],
+['podium','podium','He stood on the podium.'],
+['trophy','trophée','They lifted the trophy.'],
+['to rank','se classer','She ranked third.','ranked'],
+['hiking','randonnée','We went hiking in the mountains.'],
+['snorkelling','plongée avec tuba','Snorkelling is easy in the lagoon.'],
+['beginner','débutant','I\'m a beginner in swimming.']
+]},
+{ id:'voyage', group:'Fiche 1000 mots', title:'Voyage et transports', desc:'Aéroport, hébergement, tourisme, imprévus.', kind:'vocab', items:[
+['itinerary','itinéraire','We planned a detailed itinerary.'],
+['to book','réserver','I booked a room online.','booked'],
+['luggage','bagages','Our luggage was heavy.'],
+['suitcase','valise','My suitcase is red.'],
+['one-way ticket','aller simple','A one-way ticket, please.'],
+['return ticket','aller-retour','A return ticket to Paris, please.'],
+['exchange rate','taux de change','The exchange rate is favourable.'],
+['boarding pass','carte d\'embarquement','Show your boarding pass.'],
+['gate','porte d\'embarquement','Your gate is number 12.'],
+['delay','retard','There is a two-hour delay.'],
+['layover','escale','We have a layover in Los Angeles.'],
+['connection','correspondance','I missed my connection.'],
+['customs','douane','We went through customs.'],
+['carry-on','bagage à main','My carry-on is small.'],
+['to board','embarquer','Passengers are boarding now.','boarding'],
+['to land','atterrir','We land at six.','land'],
+['aisle','couloir (siège)','I\'d like an aisle seat.'],
+['seat belt','ceinture de sécurité','Fasten your seat belt.'],
+['jet lag','décalage horaire','I have terrible jet lag.'],
+['turbulence','turbulences','There was a lot of turbulence.'],
+['platform','quai','The train leaves from platform two.'],
+['timetable','horaires','Check the timetable.'],
+['fare','tarif','The fare is cheap.'],
+['to rent','louer','We rented a scooter.','rented'],
+['hostel','auberge de jeunesse','We stayed in a hostel.'],
+['guesthouse','pension, maison d\'hôtes','The guesthouse was charming.'],
+['to check out','libérer la chambre','We check out at eleven.','check out'],
+['sea view','vue sur la mer','We have a room with a sea view.'],
+['sightseeing','visite touristique','We did some sightseeing.'],
+['waterfall','cascade','We hiked to a waterfall.'],
+['lagoon','lagon','The lagoon is crystal clear.'],
+['crowded','bondé','The market was crowded.'],
+['directions','indications (pour s\'orienter)','Can you give me directions to the station?'],
+['lost property','objets trouvés','Go to the lost property office.'],
+['refund','remboursement','I asked for a refund.'],
+['complaint','réclamation','I made a complaint to the manager.'],
+['to miss','rater, manquer','We missed the last train.','missed']
+]},
+{ id:'corps', group:'Fiche 1000 mots', title:'Corps et santé', desc:'Parties du corps, symptômes, soins.', kind:'vocab', items:[
+['wrist','poignet','She sprained her wrist.'],
+['elbow','coude','He hit his elbow.'],
+['shoulder','épaule','I hurt my shoulder.'],
+['ankle','cheville','I twisted my ankle.'],
+['knee','genou','My knee hurts when I run.'],
+['chest','poitrine','I feel pain in my chest.'],
+['neck','cou, nuque','My neck is stiff.'],
+['hip','hanche','He has a sore hip.'],
+['lung','poumon','Swimming strengthens your lungs.','lungs'],
+['bone','os','He broke a bone.'],
+['skin','peau','Use sunscreen to protect your skin.'],
+['tongue','langue','I burnt my tongue.'],
+['toe','orteil','I stubbed my toe.'],
+['thumb','pouce','I hurt my thumb.'],
+['fever','fièvre','He has a high fever.'],
+['cough','toux','I have a bad cough.'],
+['a cold','rhume','I caught a cold.'],
+['flu','grippe','Half the office has the flu.'],
+['headache','mal de tête','I have a terrible headache.'],
+['allergy','allergie','She has a pollen allergy.'],
+['prescription','ordonnance','The doctor wrote me a prescription.'],
+['sunburn','coup de soleil','I got a bad sunburn.'],
+['to sneeze','éternuer','I keep sneezing.','sneezing'],
+['to heal','guérir, cicatriser','The wound is healing.','healing'],
+['to bleed','saigner','My finger is bleeding.','bleeding'],
+['to recover','se rétablir','He is recovering well.','recovering'],
+['appointment','rendez-vous','I have a doctor\'s appointment at ten.'],
+['diet','régime, alimentation','A balanced diet is essential.']
+]},
+{ id:'quotidien', group:'Fiche 1000 mots', title:'Quotidien, adjectifs, numérique', desc:'Maison, émotions, caractère, outils numériques, travail.', kind:'vocab', items:[
+['cupboard','placard','The plates are in the cupboard.'],
+['drawer','tiroir','The scissors are in the drawer.'],
+['ceiling','plafond','The ceiling is very high.'],
+['broom','balai','Pass me the broom, please.'],
+['bucket','seau','Fill the bucket with water.'],
+['lid','couvercle','Put the lid on the pot.'],
+['tray','plateau','She carried the tray to the table.'],
+['napkin','serviette de table','Use a napkin.'],
+['cutting board','planche à découper','Put the vegetables on the cutting board.'],
+['to do the dishes','faire la vaisselle','I do the dishes after dinner.','do the dishes'],
+['to hang the laundry','étendre le linge','I hang the laundry in the sun.','hang the laundry'],
+['rubbish','déchets, ordures','Take out the rubbish, please.'],
+['sink','évier','The dishes are in the sink.'],
+['tap','robinet','Turn off the tap.'],
+['cushion','coussin','The sofa has three cushions.','cushions'],
+['knitting','tricot','My grandmother loves knitting.'],
+['smelly','malodorant','My gym shoes are smelly.'],
+['harmful','nocif','Too much sugar is harmful.'],
+['proud','fier','I\'m proud of you.'],
+['grateful','reconnaissant','I\'m grateful for your help.'],
+['relieved','soulagé','I was relieved to hear the news.'],
+['embarrassed','gêné','I was embarrassed by my mistake.'],
+['jealous','jaloux','He was jealous of his brother.'],
+['lonely','seul, isolé','She felt lonely abroad.'],
+['bold','audacieux','It was a bold decision.'],
+['narrow','étroit','The street is narrow.'],
+['thick','épais','The soup is thick.'],
+['sharp','tranchant','The knife is sharp.'],
+['shy','timide','My son is very shy.'],
+['lazy','paresseux','I feel lazy today.'],
+['selfish','égoïste','Don\'t be so selfish.'],
+['password','mot de passe','I forgot my password.'],
+['charger','chargeur','Have you got a charger?'],
+['software','logiciel','The software is up to date.'],
+['to upload','téléverser','Upload the file here.','upload'],
+['to download','télécharger','I downloaded the document.','downloaded'],
+['to log in','se connecter','Log in with your password.','log in'],
+['deadline','date limite','The deadline is Friday.'],
+['to hire','embaucher','They hired two trainers.','hired'],
+['to resign','démissionner','He resigned last month.','resigned'],
+['to revise','réviser','I revise for the exam.','revise']
+]},
+{ id:'expr', group:'Fiche 1000 mots', title:'Expressions et verbes à particule', desc:'Idiomes courants et phrasal verbs.', kind:'vocab', items:[
+['a piece of cake','du gâteau, très facile','The exam was a piece of cake.'],
+['break a leg','bonne chance','Break a leg tonight!'],
+['once in a blue moon','très rarement','We go out once in a blue moon.'],
+['it\'s raining cats and dogs','il pleut des cordes','Take a coat, it\'s raining cats and dogs.'],
+['under the weather','pas en forme','I\'m feeling under the weather today.'],
+['on the same page','sur la même longueur d\'onde','Let\'s make sure we are on the same page.'],
+['in the same boat','dans la même situation','We are all in the same boat.'],
+['to call it a day','arrêter pour aujourd\'hui','It\'s late, let\'s call it a day.','call it a day'],
+['an arm and a leg','une fortune (coûter cher)','That car costs an arm and a leg.'],
+['to hit the nail on the head','mettre le doigt dessus','You hit the nail on the head.','hit the nail on the head'],
+['to give up','abandonner','Never give up.','give up'],
+['to look for','chercher','I\'m looking for my keys.','looking for'],
+['to look after','s\'occuper de','She looks after her grandmother.','looks after'],
+['to find out','découvrir','I found out the truth.','found out'],
+['to carry on','continuer','Carry on, you\'re doing well.','carry on'],
+['to turn on','allumer','Turn on the light.','turn on'],
+['to turn off','éteindre','Turn off your phone.','turn off'],
+['to put off','reporter','Don\'t put off your homework.','put off'],
+['to set up','installer, mettre en place','He set up a new account.','set up'],
+['to take off','enlever, décoller','Take off your shoes.','take off'],
+['to get up','se lever','I get up at six.','get up'],
+['to throw away','jeter','Throw away the old newspapers.','throw away'],
+['to work out','faire du sport, résoudre','I work out three times a week.','work out'],
+['to run out of','manquer de, n\'avoir plus de','We ran out of milk.','ran out of'],
+['to get along with','s\'entendre avec','I get along with my colleagues.','get along with'],
+['to catch up','rattraper son retard','I need to catch up on my work.','catch up'],
+['to figure out','comprendre, trouver la solution','I can\'t figure out this problem.','figure out']
+]},
+{ id:'verbes', group:'Fiche 1000 mots', title:'Verbes irréguliers', desc:'Écris le prétérit et le participe passé.', kind:'verbs', items:[
+['to be','être','was / were','been'],['to have','avoir','had','had'],['to do','faire','did','done'],['to go','aller','went','gone / been'],
+['to get','obtenir, devenir','got','got / gotten'],['to make','fabriquer, faire','made','made'],['to take','prendre','took','taken'],['to give','donner','gave','given'],
+['to say','dire','said','said'],['to tell','raconter, dire à','told','told'],['to see','voir','saw','seen'],['to know','savoir, connaître','knew','known'],
+['to think','penser','thought','thought'],['to find','trouver','found','found'],['to buy','acheter','bought','bought'],['to bring','apporter','brought','brought'],
+['to teach','enseigner','taught','taught'],['to catch','attraper','caught','caught'],['to feel','ressentir','felt','felt'],['to keep','garder','kept','kept'],
+['to leave','partir, laisser','left','left'],['to lose','perdre','lost','lost'],['to mean','signifier','meant','meant'],['to meet','rencontrer','met','met'],
+['to pay','payer','paid','paid'],['to read','lire','read','read'],['to run','courir','ran','run'],['to sell','vendre','sold','sold'],
+['to send','envoyer','sent','sent'],['to sit','s\'asseoir','sat','sat'],['to sleep','dormir','slept','slept'],['to speak','parler','spoke','spoken'],
+['to spend','dépenser, passer (du temps)','spent','spent'],['to stand','se tenir debout','stood','stood'],['to swim','nager','swam','swum'],['to understand','comprendre','understood','understood'],
+['to wake up','se réveiller','woke up','woken up'],['to wear','porter (un vêtement)','wore','worn'],['to win','gagner','won','won'],['to write','écrire','wrote','written'],
+['to begin','commencer','began','begun'],['to break','casser','broke','broken'],['to choose','choisir','chose','chosen'],['to draw','dessiner','drew','drawn'],
+['to drink','boire','drank','drunk'],['to drive','conduire','drove','driven'],['to eat','manger','ate','eaten'],['to fall','tomber','fell','fallen'],
+['to fly','voler (dans les airs)','flew','flown'],['to forget','oublier','forgot','forgotten'],['to grow','grandir, pousser','grew','grown'],['to hear','entendre','heard','heard'],
+['to hide','cacher','hid','hidden'],['to hold','tenir','held','held'],['to hurt','faire mal','hurt','hurt'],['to lend','prêter','lent','lent'],
+['to ride','monter (vélo, cheval)','rode','ridden'],['to ring','sonner','rang','rung'],['to rise','se lever (soleil)','rose','risen'],['to shake','secouer','shook','shaken'],
+['to sing','chanter','sang','sung'],['to steal','voler (dérober)','stole','stolen'],['to throw','jeter, lancer','threw','thrown'],['to build','construire','built','built'],
+['to cut','couper','cut','cut'],['to dig','creuser','dug','dug'],['to feed','nourrir','fed','fed'],['to fight','se battre','fought','fought'],
+['to hang','accrocher','hung','hung'],['to lead','mener, diriger','led','led'],['to tear','déchirer','tore','torn'],['to bite','mordre','bit','bitten']
+]},
+{ id:'connecteurs', group:'Fiche 1000 mots', title:'Mots de liaison', desc:'Choisis le bon connecteur : cause, opposition, but, condition, ordre.', kind:'qcm', items:[
+{p:'I won\'t go ___ you come with me.',o:['unless','because','although','so'],a:0,e:'unless = à moins que.'},
+{p:'___ it was raining, we went out.',o:['Although','Because','Therefore','Unless'],a:0,e:'although = bien que (opposition).'},
+{p:'He didn\'t study; ___, he failed.',o:['therefore','although','whereas','despite'],a:0,e:'therefore = par conséquent (conséquence).'},
+{p:'The match was cancelled ___ the rain.',o:['because of','because','although','so that'],a:0,e:'because of + nom ; because + proposition.'},
+{p:'We won ___ the injuries.',o:['despite','although','because','therefore'],a:0,e:'despite + nom = malgré.'},
+{p:'He likes sports, ___ she prefers reading.',o:['whereas','therefore','unless','since'],a:0,e:'whereas = alors que (contraste).'},
+{p:'Take an umbrella ___ it rains.',o:['in case','unless','whereas','as long as'],a:0,e:'in case = au cas où.'},
+{p:'Hurry up, ___ we\'ll miss the bus.',o:['otherwise','moreover','instead','meanwhile'],a:0,e:'otherwise = sinon.'},
+{p:'I save money ___ travel.',o:['in order to','because of','so that','although'],a:0,e:'in order to + verbe = afin de.'},
+{p:'Speak slowly ___ everyone understands.',o:['so that','in order to','despite','unless'],a:0,e:'so that + proposition = pour que.'},
+{p:'I\'m tired; ___, it\'s too late.',o:['besides','however','whereas','unless'],a:0,e:'besides = d\'ailleurs, en outre.'},
+{p:'___, the trip was a success.',o:['Overall','Unless','Whereas','Despite'],a:0,e:'overall = dans l\'ensemble.'},
+{p:'She was ___ tired ___ she fell asleep.',o:['so … that','such … that','too … that','very … than'],a:0,e:'so + adjectif + that (intensité → conséquence).'},
+{p:'The delay was ___ a technical problem.',o:['due to','despite','although','whereas'],a:0,e:'due to = en raison de.'},
+{p:'___ your help, I finished early.',o:['Thanks to','Despite','Unless','Whereas'],a:0,e:'thanks to = grâce à.'},
+{p:'It\'s expensive but ___ worth it.',o:['nonetheless','therefore','so that','unless'],a:0,e:'nonetheless = néanmoins.'},
+{p:'I\'ll go ___ it rains.',o:['even if','unless','because','so'],a:0,e:'even if = même si (hypothèse).'},
+{p:'I don\'t know ___ he is coming or not.',o:['whether','unless','although','whereas'],a:0,e:'whether = si (choix entre deux possibilités).'},
+{p:'First, wash your hands. ___, dry them.',o:['Next','Besides','Despite','Unless'],a:0,e:'next = ensuite.'},
+{p:'I love summer, ___ July.',o:['especially','instead','otherwise','whereas'],a:0,e:'especially = surtout.'},
+{p:'___ you are here, let\'s start.',o:['Since','Unless','Although','Whereas'],a:0,e:'since = puisque (cause connue).'},
+{p:'He agreed ___ we pay first.',o:['on condition that','despite','so as','whereas'],a:0,e:'on condition that = à la condition que.'},
+{p:'I didn\'t take the bus; I walked ___.',o:['instead','besides','therefore','meanwhile'],a:0,e:'instead = à la place.'},
+{p:'___, we arrived at the hotel after a long day.',o:['Finally','Unless','Whereas','Despite'],a:0,e:'finally = enfin.'}
+]},
+{ id:'joseph', group:'Cours avec Joseph', title:'Grammaire : temps, comparatifs, modaux', desc:'Présent, passé, futur, adjectifs, comparatifs et verbes modaux.', kind:'qcm', items:[
+{p:'She ___ every day.',o:['works','is working','worked','has worked'],a:0,e:'Présent simple : habitude.'},
+{p:'Look! It ___ right now.',o:['is raining','rains','rained','has rained'],a:0,e:'Présent continu : action en cours.'},
+{p:'I ___ to New York three times.',o:['have been','went','was going','am going'],a:0,e:'Present perfect : expérience de vie.'},
+{p:'She ___ Rome last year.',o:['visited','has visited','was visiting','visits'],a:0,e:'Past simple : action terminée, datée.'},
+{p:'I ___ when you called.',o:['was reading','read','have read','am reading'],a:0,e:'Past continuous : action en cours interrompue.'},
+{p:'We ___ to Paris next month. (already planned)',o:['are travelling','travel','will have travelled','travelled'],a:0,e:'Présent continu à valeur de futur : projet planifié.'},
+{p:'Look at those clouds! It ___ rain.',o:['is going to','will','is to','would'],a:0,e:'be going to : prévision avec indices visibles.'},
+{p:'I\'m thirsty. I ___ get some water.',o:['will','am going to','am getting','would'],a:0,e:'will : décision spontanée.'},
+{p:'The train ___ at 6 pm.',o:['leaves','is leaving','will leaving','left'],a:0,e:'Présent simple : horaire officiel.'},
+{p:'By next year, I ___ graduated.',o:['will have','will be','am going','would'],a:0,e:'Future perfect : will have + participe passé.'},
+{p:'By noon, I ___ driving for six hours.',o:['will have been','will be','have been','am'],a:0,e:'Future perfect continuous : will have been + -ing.'},
+{p:'I ___ known her for years.',o:['have','am','had been','was'],a:0,e:'Present perfect : action non terminée.'},
+{p:'She cooked while he ___.',o:['was cleaning','cleaned','has cleaned','is cleaning'],a:0,e:'Past continuous : deux actions simultanées.'},
+{p:'This car is ___ than mine.',o:['faster','more fast','fastest','most fast'],a:0,e:'Adjectif court : -er + than.'},
+{p:'This movie is ___ than the book.',o:['more interesting','interestinger','most interesting','interesting'],a:0,e:'Adjectif long : more + adjectif + than.'},
+{p:'She is ___ tall ___ her brother.',o:['as … as','so … than','more … as','the … of'],a:0,e:'Égalité : as + adjectif + as.'},
+{p:'happy → ___',o:['happier','more happy','happyer','most happy'],a:0,e:'-y devient -ier.'},
+{p:'big → the ___',o:['biggest','bigest','most big','bigger'],a:0,e:'consonne-voyelle-consonne : on double la dernière consonne.'},
+{p:'good → better → ___',o:['best','goodest','most good','the better'],a:0,e:'Irrégulier : good, better, best.'},
+{p:'bad → ___ → worst',o:['worse','badder','more bad','worser'],a:0,e:'Irrégulier : bad, worse, worst.'},
+{p:'This is the ___ expensive restaurant. (le moins cher)',o:['least','less','lowest','fewest'],a:0,e:'Superlatif d\'infériorité : the least + adjectif.'},
+{p:'You ___ wear a helmet. (obligation forte)',o:['must','might','could','may'],a:0,e:'must : obligation forte.'},
+{p:'___ I ask a question? (permission formelle)',o:['May','Might','Must','Would'],a:0,e:'may : permission formelle.'},
+{p:'You ___ lie. (ce n\'est pas conseillé)',o:['shouldn\'t','mustn\'t to','don\'t should','not should'],a:0,e:'should not = shouldn\'t : conseil négatif.'},
+{p:'You ___ touch this. (interdit)',o:['mustn\'t','don\'t have to','needn\'t to','shouldn\'t to'],a:0,e:'mustn\'t : interdiction.'},
+{p:'It ___ rain later. (possibilité faible)',o:['might','must','shall','should to'],a:0,e:'might : possibilité faible.'},
+{p:'When I was young, I ___ swim.',o:['could','can','must','may'],a:0,e:'could : capacité passée.'},
+{p:'I ___ work tomorrow. (obligation imposée par une règle)',o:['have to','must to','should to','can to'],a:0,e:'have to : obligation extérieure.'},
+{p:'Which verb form is correct after a modal?',o:['She can swim.','She can swims.','She can to swim.','She cans swim.'],a:0,e:'Modal + base verbale, sans -s ni to.'}
+]}
+];
+if (typeof module !== 'undefined') module.exports = DECKS;
+
+/* ---- Section "Temps et verbes" ---- */
+(function(){
+  const set = (id, o) => Object.assign(DECKS.find(d => d.id === id), o);
+  set('verbes', { section:'tv', group:'Temps et verbes', title:'Verbes irréguliers (formes)', desc:'Écris le prétérit et le participe passé de 72 verbes de ta fiche.' });
+  set('joseph', { section:'tv', group:'Cours avec Joseph', tag:'Grammaire' });
+  set('connecteurs', { tag:'Connecteur' });
+
+  DECKS.push(
+  { id:'tpsChoix', section:'tv', group:'Temps et verbes', tag:'Choix du temps', title:'Quel temps choisir ?', desc:'Repère les indices (since, ago, while, by…) et choisis le bon temps.', kind:'qcm', items:[
+    {p:"She ___ to Paris in 2019.",o:['went','has gone','goes','was going'],a:0,e:"Date précise dans le passé : past simple."},
+    {p:"I ___ here since 2015.",o:['have lived','lived','am living','was living'],a:0,e:"since + point de départ, toujours vrai maintenant : present perfect."},
+    {p:"He ___ in London for five years. (il y habite toujours)",o:['has lived','lived','is living','lives'],a:0,e:"for + durée, situation non terminée : present perfect."},
+    {p:"They ___ TV when the power went out.",o:['were watching','watched','have watched','watch'],a:0,e:"Action longue interrompue par une action courte : past continuous."},
+    {p:"Right now, I ___ an email.",o:['am writing','write','wrote','have written'],a:0,e:"Action en cours : présent continu."},
+    {p:"She usually ___ coffee in the morning.",o:['drinks','is drinking','drank','has drunk'],a:0,e:"usually = habitude : présent simple."},
+    {p:"I saw him two days ___.",o:['ago','before','since','for'],a:0,e:"ago + past simple : il y a deux jours."},
+    {p:"Next Monday, I ___ the dentist. (rendez-vous fixé)",o:['am seeing','see','will have seen','saw'],a:0,e:"Projet planifié : présent continu à valeur de futur."},
+    {p:"The shop ___ at 9 every day.",o:['opens','is opening','opened','has opened'],a:0,e:"Habitude / horaire : présent simple."},
+    {p:"This time tomorrow, we ___ on the beach.",o:['will be lying','will lie','are lying','lay'],a:0,e:"Action en cours à un moment futur : future continuous."},
+    {p:"By 2030, she ___ her studies.",o:['will have finished','will finish','is finishing','finished'],a:0,e:"by + date : future perfect (achevé avant ce moment)."},
+    {p:"I think it ___ tomorrow.",o:['will rain','is raining','rained','has rained'],a:0,e:"Prévision sans preuve : will."},
+    {p:"While I ___, the phone rang.",o:['was cooking','cooked','have cooked','cook'],a:0,e:"while + action de fond : past continuous."},
+    {p:"She ___ her keys, so she can't get in.",o:['has lost','lost','was losing','loses'],a:0,e:"Résultat visible maintenant : present perfect."},
+    {p:"When I was a child, I ___ in the sea every summer.",o:['swam','have swum','was swimming','swim'],a:0,e:"Habitude passée, révolue : past simple."},
+    {p:"Water ___ at 100 °C.",o:['boils','is boiling','boiled','has boiled'],a:0,e:"Vérité générale : présent simple."},
+    {p:"Have you ever ___ sushi?",o:['eaten','ate','eat','eating'],a:0,e:"ever + have + participe passé : eaten."},
+    {p:"Last night I ___ a strange noise.",o:['heard','have heard','was hearing','hear'],a:0,e:"last night : past simple."},
+    {p:"I have never ___ to Japan.",o:['been','was','be','being'],a:0,e:"have + participe passé : been."},
+    {p:"Listen! Someone ___ at the door.",o:['is knocking','knocks','knocked','has knocked'],a:0,e:"Action en cours (Listen!) : présent continu."},
+    {p:"My flight ___ at 7:45 tomorrow.",o:['leaves','is leave','will leaving','left'],a:0,e:"Horaire officiel : présent simple."},
+    {p:"By noon, she ___ for six hours.",o:['will have been working','will work','is working','has worked'],a:0,e:"Durée jusqu'à un moment futur : future perfect continuous."},
+    {p:"We ___ to the beach every Sunday when I was young.",o:['went','have gone','were going','go'],a:0,e:"Habitude passée : past simple."},
+    {p:"Look out! You ___ fall!",o:['are going to','will','are','have'],a:0,e:"Prévision avec indice visible : be going to."},
+    {p:"Don't worry, I ___ you with the bags. (promesse)",o:['will help','am helping','help','helped'],a:0,e:"Promesse, offre : will."},
+    {p:"She ___ her homework yet.",o:["hasn't finished","didn't finished","doesn't finish","isn't finish"],a:0,e:"yet + négation : present perfect (has not + participe)."},
+    {p:"What time ___ the train leave?",o:['does','do','is','did to'],a:0,e:"Question au présent simple : does + sujet + base."},
+    {p:"___ you ever been to Tahiti?",o:['Have','Did','Are','Do'],a:0,e:"Expérience de vie : Have you ever been…?"},
+    {p:"He ___ tired when he arrived.",o:['was','has','is','were'],a:0,e:"Passé du verbe be : was (I/he/she/it), were (you/we/they)."},
+    {p:"They ___ for me when I got there.",o:['were waiting','waited','have waited','wait'],a:0,e:"Action en cours à un moment du passé : past continuous."}
+  ]},
+  { id:'tpsConj', section:'tv', group:'Temps et verbes', tag:'Conjugaison', title:'Conjuguer : présent et passé', desc:'Présent simple et continu, past simple et continuous, present perfect.', kind:'conj', items:[
+    ['She ___ (work) in a bank every day.','Verbe : work',['works'],"Présent simple, 3e personne : -s."],
+    ['The sun ___ (rise) in the east.','Verbe : rise',['rises'],"Présent simple : vérité générale."],
+    ['My brother ___ (not like) spicy food.','Verbe : not like',["doesn't like","does not like"],"Présent simple négatif : doesn't + base."],
+    ['Look! The children ___ (play) in the garden.','Verbe : play',['are playing'],"Présent continu : action en cours."],
+    ['I ___ (stay) with friends this week.','Verbe : stay',['am staying'],"Présent continu : situation temporaire."],
+    ['She ___ (not listen) to me right now.','Verbe : not listen',["isn't listening","is not listening"],"Présent continu négatif : isn't + V-ing."],
+    ['She ___ (visit) Rome last year.','Verbe : visit',['visited'],"Past simple : action terminée, datée."],
+    ['He ___ (go) to bed at ten yesterday.','Verbe : go',['went'],"Past simple irrégulier : go, went, gone."],
+    ['I ___ (not see) him last night.','Verbe : not see',["didn't see","did not see"],"Past simple négatif : didn't + base."],
+    ['When I was young, I ___ (play) the piano.','Verbe : play',['played'],"Past simple : habitude passée."],
+    ['They ___ (buy) a new car in May.','Verbe : buy',['bought'],"Past simple irrégulier : buy, bought, bought."],
+    ['I ___ (read) when you called.','Verbe : read',['was reading'],"Past continuous : action interrompue."],
+    ['She ___ (cook) while he was cleaning.','Verbe : cook',['was cooking'],"Past continuous : deux actions simultanées."],
+    ['They ___ (walk) when it started to rain.','Verbe : walk',['were walking'],"Past continuous : were pour they."],
+    ['We ___ (not sleep) when the storm began.','Verbe : not sleep',["weren't sleeping","were not sleeping"],"Past continuous négatif : weren't + V-ing."],
+    ['I ___ (be) to New York three times.','Verbe : be',['have been'],"Present perfect : expérience de vie."],
+    ['She ___ (just finish) her homework.','Verbe : just finish',['has just finished'],"Present perfect : action très récente (just entre has et le participe)."],
+    ['I ___ (know) her for years.','Verbe : know',['have known'],"Present perfect : situation non terminée (for)."],
+    ['They ___ (move) house recently.','Verbe : move',['have moved'],"Present perfect : action récente, lien avec le présent."],
+    ['I ___ (not eat) lunch yet.','Verbe : not eat',["haven't eaten","have not eaten"],"Present perfect négatif : haven't + participe passé."],
+    ['We ___ (live) here since 2019.','Verbe : live',['have lived','have been living'],"since + point de départ : present perfect."]
+  ]},
+  { id:'tpsFutur', section:'tv', group:'Temps et verbes', tag:'Conjugaison', title:'Conjuguer : le futur', desc:'Will, be going to, présent continu, horaires, future perfect.', kind:'conj', items:[
+    ["It's cold. I ___ (close) the window.",'Verbe : close',['will close',"'ll close","ll close"],"Décision spontanée : will."],
+    ["Don't worry, I ___ (help) you.",'Verbe : help',['will help',"'ll help","ll help"],"Promesse : will."],
+    ['Look at those clouds! It ___ (rain).','Verbe : rain',['is going to rain'],"Prévision avec indice visible : be going to."],
+    ['I ___ (study) medicine next year. I have decided.','Verbe : study',['am going to study'],"Intention déjà décidée : be going to."],
+    ["I ___ (meet) John tonight; it's in my diary.",'Verbe : meet',['am meeting','am going to meet'],"Projet planifié : présent continu."],
+    ['The meeting ___ (start) at 9 tomorrow.','Verbe : start',['starts'],"Horaire officiel : présent simple."],
+    ['At 8 tonight I ___ (work).','Verbe : work',['will be working'],"Future continuous : will be + V-ing."],
+    ['By next year, I ___ (graduate).','Verbe : graduate',['will have graduated'],"Future perfect : will have + participe passé."],
+    ['By noon, I ___ (drive) for six hours.','Verbe : drive',['will have been driving'],"Future perfect continuous : will have been + V-ing."],
+    ["She's booked the tickets. She ___ (visit) us next week.",'Verbe : visit',['is visiting','is going to visit'],"Projet organisé : présent continu ou be going to."],
+    ['Perhaps it ___ (snow) tomorrow.','Verbe : snow',['will snow'],"Prévision sans preuve : will."]
+  ]},
+  { id:'tpsIrr', section:'tv', group:'Temps et verbes', tag:'Conjugaison', title:'Irréguliers en contexte', desc:'Les verbes irréguliers dans des phrases au past simple et au present perfect.', kind:'conj', items:[
+    ['I ___ (see) that film twice.','Verbe : see',['have seen'],"Present perfect : have + seen."],
+    ['He ___ (break) his arm last month.','Verbe : break',['broke'],"last month : past simple, broke."],
+    ['She ___ (write) three emails this morning.','Verbe : write',['has written'],"Present perfect : written."],
+    ['We ___ (eat) fish for lunch yesterday.','Verbe : eat',['ate'],"yesterday : past simple, ate."],
+    ['They ___ (not speak) since Monday.','Verbe : not speak',["haven't spoken","have not spoken"],"since : present perfect négatif, spoken."],
+    ['I ___ (lose) my keys! Have you seen them?','Verbe : lose',['have lost'],"Résultat présent : have lost."],
+    ['He ___ (swim) in the lagoon every morning last summer.','Verbe : swim',['swam'],"Habitude passée : swam."],
+    ['She ___ (teach) English for ten years. She still does.','Verbe : teach',['has taught','has been teaching'],"Situation non terminée : has taught."],
+    ['Who ___ (drink) all the water this morning?','Verbe : drink',['drank'],"Moment passé précis : drank."],
+    ['I ___ (fly) to Auckland three times.','Verbe : fly',['have flown'],"Expérience de vie : flown."],
+    ['The children ___ (hide) when I came in.','Verbe : hide',['were hiding'],"Past continuous : were hiding."],
+    ['He ___ (forget) his password last week.','Verbe : forget',['forgot'],"last week : past simple, forgot."]
+  ]},
+  { id:'tpsTrans', section:'tv', group:'Temps et verbes', tag:'Transformation', title:'Négations et questions', desc:'Transforme la phrase : forme négative, interrogative, question avec how / what.', kind:'conj', items:[
+    ['She works on Sundays.','Forme négative.',["She doesn't work on Sundays","She does not work on Sundays"],"Présent simple : doesn't + base verbale."],
+    ['They live in Tahiti.','Forme interrogative.',['Do they live in Tahiti'],"Présent simple : Do + sujet + base."],
+    ['He went to the market.','Forme négative.',["He didn't go to the market","He did not go to the market"],"Past simple : didn't + base."],
+    ['You saw the film.','Forme interrogative.',['Did you see the film'],"Past simple : Did + sujet + base."],
+    ['I am working today.','Forme négative.',["I'm not working today","I am not working today"],"Présent continu : be + not."],
+    ['She is reading.','Forme interrogative.',['Is she reading'],"Présent continu : inversion be + sujet."],
+    ['We have finished.','Forme négative.',["We haven't finished","We have not finished"],"Present perfect : have + not."],
+    ['He has been to Fiji.','Forme interrogative.',['Has he been to Fiji'],"Present perfect : inversion have/has + sujet."],
+    ['I can swim.','Forme négative.',["I can't swim","I cannot swim"],"Modal : can't / cannot + base."],
+    ['She can speak Spanish.','Forme interrogative.',['Can she speak Spanish'],"Modal : inversion modal + sujet."],
+    ['He was sleeping.','Forme négative.',["He wasn't sleeping","He was not sleeping"],"Past continuous : was + not."],
+    ['They were playing.','Forme interrogative.',['Were they playing'],"Past continuous : inversion were + sujet."],
+    ['It will rain tomorrow.','Forme négative.',["It won't rain tomorrow","It will not rain tomorrow"],"Futur : won't + base."],
+    ['She is going to win.','Forme interrogative.',['Is she going to win'],"Be going to : inversion be + sujet."],
+    ['He plays tennis.','Pose une question avec « How often ».',['How often does he play tennis'],"How often + does + sujet + base."],
+    ['You have lived here for years.','Pose une question avec « How long ».',['How long have you lived here'],"How long + have + sujet + participe passé."],
+    ['She left at six.','Pose une question avec « What time ».',['What time did she leave'],"What time + did + sujet + base."],
+    ["I don't like fish.",'Forme affirmative.',['I like fish'],"On retire don't : retour au présent simple affirmatif."],
+    ['You must wear a helmet.','Interdiction (forme négative).',["You mustn't wear a helmet","You must not wear a helmet"],"must not : interdiction."],
+    ['They study every evening.','Forme négative.',["They don't study every evening","They do not study every evening"],"Présent simple : don't + base."]
+  ]},
+  { id:'tpsErr', section:'tv', group:'Temps et verbes', tag:'Phrase correcte', title:'Quelle phrase est correcte ?', desc:'Les erreurs classiques des francophones : since / for, did + base, accords, comparatifs.', kind:'qcm', items:[
+    {p:'Quelle phrase est correcte ? (durée)',o:['I have lived here for ten years.','I live here since ten years.','I am living here since ten years.','I lived here since ten years.'],a:0,e:"Durée jusqu'à maintenant : present perfect + for."},
+    {p:'Quelle phrase est correcte ? (négation)',o:["She doesn't like coffee.","She doesn't likes coffee.","She don't like coffee.","She not like coffee."],a:0,e:"doesn't + base, sans -s."},
+    {p:'Quelle phrase est correcte ? (hier)',o:['I saw him yesterday.','I have seen him yesterday.','I see him yesterday.','I was seeing him yesterday.'],a:0,e:"yesterday : past simple, jamais present perfect."},
+    {p:'Quelle phrase est correcte ? (être d\'accord)',o:['I agree with you.','I am agree with you.','I agrees with you.','I am agreeing you.'],a:0,e:"to agree est un verbe : pas de be."},
+    {p:'Quelle phrase est correcte ? (âge)',o:["I'm thirty years old.",'I have thirty years.','I am thirty years.','I have thirty years old.'],a:0,e:"L'âge se dit avec be : I am thirty."},
+    {p:'Quelle phrase est correcte ? (3e personne)',o:['She works in a bank.','She work in a bank.','She is work in a bank.','She works in a bank since.'],a:0,e:"Présent simple : -s à la 3e personne."},
+    {p:'Quelle phrase est correcte ? (question au passé)',o:['Did you go to the beach?','Did you went to the beach?','Do you went to the beach?','Did you to go to the beach?'],a:0,e:"Did + base : le passé est porté par did."},
+    {p:'Quelle phrase est correcte ? (expérience)',o:['I have never been to Japan.','I have never went to Japan.','I never was been to Japan.','I am never been to Japan.'],a:0,e:"have never + participe passé (been)."},
+    {p:'Quelle phrase est correcte ? (projet)',o:['We are meeting Anna tonight.','We are meet Anna tonight.','We meeting Anna tonight.','We will meeting Anna tonight.'],a:0,e:"Projet planifié : be + V-ing."},
+    {p:'Quelle phrase est correcte ? (modal)',o:['He can swim very well.','He cans swim very well.','He can to swim very well.','He can swims very well.'],a:0,e:"Modal + base : ni -s, ni to."},
+    {p:'Quelle phrase est correcte ? (interdiction)',o:['You must not touch this.','You must to not touch this.','You not must touch this.',"You don't must touch this."],a:0,e:"must not : interdiction, pas d'auxiliaire do."},
+    {p:'Quelle phrase est correcte ? (superlatif)',o:["It's the most beautiful beach.","It's the most beautifulest beach.","It's the beautifullest beach.","It's most beautiful beach."],a:0,e:"Adjectif long : the most + adjectif."},
+    {p:'Quelle phrase est correcte ? (comparatif court)',o:['This car is faster than mine.','This car is more fast than mine.','This car is fastest than mine.','This car is faster that mine.'],a:0,e:"Adjectif court : -er + than."},
+    {p:'Quelle phrase est correcte ? (comparatif de taille)',o:['She is taller than her brother.','She is more tall than her brother.','She is taller as her brother.','She is tallest than her brother.'],a:0,e:"-er + than."},
+    {p:'Quelle phrase est correcte ? (action interrompue)',o:['I was reading when you called.','I read when you called.','I am reading when you called.','I have been reading when you called.'],a:0,e:"Action de fond interrompue : past continuous."},
+    {p:'Quelle phrase est correcte ? (question where)',o:['Where did she live?','Where did she lived?','Where she did live?','Where does she lived?'],a:0,e:"Question : mot interrogatif + did + sujet + base."},
+    {p:'Quelle phrase est correcte ? (futur promesse)',o:["I'll call you tomorrow.","I'll to call you tomorrow.",'I will calling you tomorrow.',"I'm will call you tomorrow."],a:0,e:"will + base, sans to."},
+    {p:'Quelle phrase est correcte ? (how long)',o:['How long have you been here?','How long you have been here?','How much time are you here?','Since how long are you here?'],a:0,e:"How long + have + sujet + participe passé."},
+    {p:'Quelle phrase est correcte ? (just)',o:['She has just left.','She has just leaved.','She is just left.','She has just leave.'],a:0,e:"have + just + participe passé : left."},
+    {p:'Quelle phrase est correcte ? (négation au passé)',o:["He didn't come yesterday.","He didn't came yesterday.",'He not came yesterday.',"He doesn't come yesterday."],a:0,e:"didn't + base : come."}
+  ]}
+  );
+  const mv = (id, after) => { const i = DECKS.findIndex(x => x.id === id); const [x] = DECKS.splice(i,1); const j = after ? DECKS.findIndex(y => y.id === after) + 1 : DECKS.length; DECKS.splice(j,0,x); };
+  mv('verbes', 'tpsErr'); mv('joseph', null);
+})();
+
+
+const $ = s => document.querySelector(s);
+function h(tag, props, ...kids){
+  const e = document.createElement(tag);
+  for (const k in (props||{})) {
+    const v = props[k];
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (k.startsWith('aria-') && typeof v === 'boolean') e.setAttribute(k, String(v));
+    else if (v !== false && v != null) e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()) { if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(c)); }
+  return e;
+}
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const norm = s => s.toLowerCase().replace(/[’‘]/g,"'").replace(/[.,;:!?"“”]/g,'').replace(/-/g,' ').replace(/\s+/g,' ').trim();
+function variants(en){
+  const out = new Set();
+  en.split(' / ').forEach(p => {
+    p = p.trim(); out.add(p);
+    const np = p.replace(/\s*\(.*?\)/g,'').trim(); out.add(np);
+    [p,np].forEach(x => out.add(x.replace(/^(to|a|an|the) /i,'')));
+  });
+  return [...out].map(norm);
+}
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function keyOf(it){ return it[3] || it[0].replace(/\s*\(.*?\)/g,'').replace(/^to /i,''); }
+function clozeOf(it){
+  if (!it[2]) return null;
+  const re = new RegExp('(?<![A-Za-z])'+esc(keyOf(it))+'(?![A-Za-z])','i');
+  return re.test(it[2]) ? it[2].replace(re,'_____') : null;
+}
+const itemKey = it => Array.isArray(it) ? it[0] : (it.k || it.p);
+const deckById = id => DECKS.find(d => d.id === id);
+const deckTitle = id => id === 'review' ? 'Révision des erreurs' : (deckById(id) ? deckById(id).title : id);
+const MODES = [['mix','Mixte'],['en-fr','EN → FR'],['fr-en','FR → EN (choix)'],['write','Écrire en anglais'],['cloze','Phrases à trous']];
+const MODE_LABEL = {'mix':'Mixte','en-fr':'EN → FR','fr-en':'FR → EN','write':'Écrire','cloze':'Phrases à trous','retry':'Erreurs refaites','':''};
+
+/* =============== progress store (local + account) =============== */
+/* items[deckId][key] = [asked, lastWrong(0/1), rightCount, streak, lastTs]; sessions = [{t,d,m,s,n}]; reset = {deckId|'*': ts} */
+const PKEY = 'prog:v2';
+function migrateOld(){
+  const p = {items:{}, sessions:[], reset:{}};
+  DECKS.forEach(d => { try { const o = JSON.parse(localStorage.getItem('hist:'+d.id));
+    if (o) { p.items[d.id] = {}; for (const k in o) { const a=o[k][0], w=o[k][1]; p.items[d.id][k] = [a, w, w ? Math.max(a-1,0) : a, w ? 0 : Math.min(a,1), 0]; } } } catch(e){} });
+  return p;
+}
+function loadLocal(){
+  try { const j = JSON.parse(localStorage.getItem(PKEY)); if (j && j.items) { j.sessions = j.sessions||[]; j.reset = j.reset||{}; return j; } } catch(e){}
+  return migrateOld();
+}
+let prog = loadLocal();
+function saveLocal(){ try { localStorage.setItem(PKEY, JSON.stringify(prog)); } catch(e){} }
+const eff = (p, d) => Math.max((p.reset && p.reset[d]) || 0, (p.reset && p.reset['*']) || 0);
+function merge(remote){
+  if (!remote || typeof remote !== 'object') return;
+  const R0 = remote.items || {}, rs = remote.sessions || [], rr = remote.reset || {};
+  const rem = {reset: rr};
+  const ids = new Set([...Object.keys(prog.items), ...Object.keys(R0)]);
+  ids.forEach(id => {
+    const a = eff(prog, id), b = eff(rem, id), L = prog.items[id] || {}, R = R0[id] || {};
+    if (a > b) prog.items[id] = L;
+    else if (b > a) prog.items[id] = R;
+    else { const out = {...L}; for (const k in R) { const l = out[k], r = R[k]; if (!l || r[0] > l[0] || (r[0] === l[0] && r[4] > l[4])) out[k] = r; } prog.items[id] = out; }
+  });
+  new Set([...Object.keys(prog.reset), ...Object.keys(rr)]).forEach(k => prog.reset[k] = Math.max(prog.reset[k]||0, rr[k]||0));
+  const seen = new Set(prog.sessions.map(s => s.t + s.d));
+  rs.forEach(s => { if (!seen.has(s.t + s.d)) prog.sessions.push(s); });
+  const cut = prog.reset['*'] || 0;
+  prog.sessions = prog.sessions.filter(s => s.t >= cut).sort((x,y) => x.t - y.t).slice(-300);
+}
+let sync = 'local', cloudDoc = null, pushing = false, pushAgain = false, pushTimer = null;
+function setSync(v){ sync = v; const el = $('#sync'); if (!el) return;
+  el.textContent = v === 'cloud' ? 'Progrès synchronisés avec ton compte : tu les retrouves sur tous tes appareils.'
+    : v === 'error' ? 'Synchronisation impossible pour le moment. Tes progrès restent sur cet appareil.'
+    : 'Progrès enregistrés sur cet appareil. Pense à exporter une sauvegarde dans Mes progrès.'; }
+async function pushCloud(){
+  if (!cloudDoc) return;
+  if (pushing) { pushAgain = true; return; }
+  pushing = true;
+  try { await cloudDoc.set({v:2, items:prog.items, sessions:prog.sessions, reset:prog.reset}); setSync('cloud'); }
+  catch(e){ setSync('error'); }
+  pushing = false;
+  if (pushAgain) { pushAgain = false; pushCloud(); }
+}
+function schedulePush(){ saveLocal(); clearTimeout(pushTimer); pushTimer = setTimeout(pushCloud, 2000); }
+async function initCloud(){
+  setSync('local');
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) return;
+    const id = await user.id(); if (!id) return;
+    cloudDoc = db.collection('data/users/' + id).doc('progress');
+    const snap = await cloudDoc.get();
+    if (snap.exists) { merge(snap.data()); saveLocal(); refreshView(); }
+    setSync('cloud');
+    pushCloud();
+  } catch(e){ cloudDoc = null; setSync('local'); }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { saveLocal(); clearTimeout(pushTimer); pushCloud(); } });
+
+function record(deckId, key, ok){
+  if (!key) return;
+  const m = prog.items[deckId] || (prog.items[deckId] = {});
+  const r = m[key] || [0,0,0,0,0];
+  m[key] = [r[0]+1, ok ? 0 : 1, r[2] + (ok ? 1 : 0), ok ? r[3]+1 : 0, Date.now()];
+  schedulePush();
+}
+function logSession(){
+  if (!quiz || quiz.logged || !quiz.results.length) return;
+  quiz.logged = true;
+  prog.sessions.push({t:Date.now(), d:quiz.id, m:quiz.retry ? 'retry' : quiz.mode, s:quiz.results.filter(r => r.ok).length, n:quiz.results.length});
+  prog.sessions = prog.sessions.slice(-300);
+  schedulePush();
+}
+function statusOf(deckId, key){
+  const r = prog.items[deckId] && prog.items[deckId][key];
+  if (!r) return 'new';
+  if (r[1]) return 'wrong';
+  return r[3] >= 3 ? 'mastered' : 'learning';
+}
+function deckStats(d){
+  const c = {mastered:0, learning:0, wrong:0, new:0};
+  d.items.forEach(it => c[statusOf(d.id, itemKey(it))]++);
+  return c;
+}
+function lastSession(id){ for (let i = prog.sessions.length-1; i >= 0; i--) if (prog.sessions[i].d === id) return prog.sessions[i]; return null; }
+function pick(deck, n){
+  const m = prog.items[deck.id] || {};
+  return deck.items.map(it => { const r = m[itemKey(it)]; const asked = r ? r[0] : 0, wrong = r ? r[1] : 0;
+    return { it, s: asked - (wrong ? 1.5 : 0) + Math.random()*1.2 }; })
+    .sort((a,b) => a.s - b.s).slice(0, n).map(x => x.it);
+}
+
+/* =============== question builders =============== */
+function choiceQ(tag, prompt, sub, correct, pool, explain, info){
+  const wrong = shuffle([...new Set(pool.filter(x => x !== correct))]).slice(0,5);
+  const options = shuffle([correct, ...wrong]);
+  return { type:'choice', tag, prompt, sub, options, correct: options.indexOf(correct), explain, answerText: correct, info };
+}
+function makeVocabQ(deck, it, mode){
+  const [en, fr, s] = it;
+  const frs = deck.items.map(x => x[1]), ens = deck.items.map(x => x[0]);
+  const full = s ? 'Exemple : ' + s : '';
+  const ans = en + ' — ' + fr;
+  const byFr = new Map(deck.items.map(x => [x[1], x])), byEn = new Map(deck.items.map(x => [x[0], x]));
+  const lookup = t => {
+    const n = norm(t); if (!n) return null;
+    const x = deck.items.find(y => variants(y[0]).includes(n) || norm(keyOf(y)) === n);
+    return x ? '« ' + t.trim() + ' » = ' + x[1] : '« ' + t.trim() + ' »';
+  };
+  if (mode === 'en-fr') { const q = choiceQ('EN → FR', en, 'Choisis la traduction.', fr, frs, full,
+    o => { const x = byFr.get(o); return x ? '« ' + o + ' » = ' + x[0] : '« ' + o + ' »'; }); q.answerText = ans; return q; }
+  if (mode === 'fr-en') { const q = choiceQ('FR → EN', fr, 'Choisis le mot anglais.', en, ens, full,
+    o => { const x = byEn.get(o); return x ? '« ' + o + ' » = ' + x[1] : '« ' + o + ' »'; }); q.answerText = ans; return q; }
+  if (mode === 'write') {
+    const base = variants(en);
+    const hint = base[base.length-1] || base[0];
+    return { type:'type', tag:'Écrire', prompt: fr, sub:'Écris en anglais.',
+      fields:[{label:'Anglais', answers: base}], explain: full, answerText: ans, info: lookup,
+      hint: hint[0] + ' … (' + hint.replace(/ /g,'').length + ' lettres)' };
+  }
+  const c = clozeOf(it);
+  const accept = [norm(keyOf(it)), ...variants(en)];
+  return { type:'type', tag:'Phrase à trous', prompt: c, sub:'Sens du mot manquant : ' + fr,
+    fields:[{label:'Mot manquant', answers: accept}], explain: full, answerText: ans, info: lookup,
+    hint: keyOf(it)[0] + ' … (' + keyOf(it).replace(/ /g,'').length + ' lettres)' };
+}
+const GLOSS = {'unless':'à moins que','because':'parce que','although':'bien que','so':'donc, alors','therefore':'par conséquent','whereas':'alors que','despite':'malgré','because of':'à cause de','so that':'pour que','in case':'au cas où','as long as':'du moment que','otherwise':'sinon','moreover':'de plus, en outre','instead':'à la place','meanwhile':'pendant ce temps','in order to':'afin de','besides':'d\'ailleurs, en outre','however':'cependant','overall':'dans l\'ensemble','due to':'en raison de','thanks to':'grâce à','nonetheless':'néanmoins','even if':'même si','whether':'si (choix entre deux possibilités)','next':'ensuite','especially':'surtout','since':'puisque','on condition that':'à la condition que','so as':'afin (de)','finally':'enfin','so … that':'si… que','such … that':'tel… que'};
+function questionsFor(deck, mode, items){
+  return items.map(it => {
+    let q;
+    if (deck.kind === 'qcm') {
+      const right = it.o[it.a], opts = shuffle(it.o);
+      const gl = deck.id === 'connecteurs' ? (o => GLOSS[o.toLowerCase()]) : (() => null);
+      q = { type:'choice', tag: deck.tag || 'Question', prompt:it.p, sub:'Choisis la bonne réponse.',
+        options: opts, correct: opts.indexOf(right), explain:it.e,
+        answerText: right + (gl(right) ? ' — ' + gl(right) : ''),
+        info: o => '« ' + o + ' »' + (gl(o) ? ' = ' + gl(o) : '') };
+    } else if (deck.kind === 'verbs') {
+      q = { type:'type', tag:'Verbe irrégulier', prompt:it[0], sub:it[1],
+        fields:[{label:'Prétérit', answers:variants(it[2])},{label:'Participe passé', answers:variants(it[3])}],
+        explain: it[0]+' – '+it[2]+' – '+it[3]+'  ('+it[1]+')', answerText: it[2]+' · '+it[3],
+        hint: it[2][0]+' … / '+it[3][0]+' …' };
+    } else if (deck.kind === 'conj') {
+      q = { type:'type', tag: deck.tag || 'Conjugaison', prompt:it[0], sub:it[1],
+        fields:[{label:'Ta réponse', answers: it[2].map(norm)}], explain: it[3], answerText: it[2][0],
+        hint: it[2][0].split(' ')[0].slice(0,1) + ' … (' + it[2][0].split(' ').length + ' mot' + (it[2][0].split(' ').length > 1 ? 's' : '') + ')' };
+    } else {
+      let m = mode;
+      if (m === 'mix') { const opts = ['en-fr','fr-en','write'].concat(clozeOf(it) ? ['cloze','cloze'] : []); m = opts[Math.floor(Math.random()*opts.length)]; }
+      if (m === 'cloze' && !clozeOf(it)) m = 'write';
+      q = makeVocabQ(deck, it, m);
+    }
+    q.key = itemKey(it); q.deckId = deck.id;
+    return q;
+  });
+}
+function buildQuiz(deck, mode, count){ return questionsFor(deck, mode, shuffle(pick(deck, count || deck.items.length))); }
+
+/* =============== views =============== */
+const state = { tab:'vocab', deck:null, mode:'mix', count:10 };
+const TABS = [['vocab','Vocabulaire'],['tv','Temps et verbes'],['stats','Mes progrès']];
+let quiz = null;
+function show(view){
+  ['home','stats','quiz','result'].forEach(v => $('#'+v).hidden = v !== view);
+  $('#nav').hidden = view === 'quiz' || view === 'result';
+  $('#sync').hidden = view === 'quiz' || view === 'result';
+  window.scrollTo(0,0);
+}
+function renderNav(){
+  const nav = $('#nav'); nav.replaceChildren();
+  TABS.forEach(([k,l]) => nav.append(h('button', {class:'tab', 'aria-pressed': state.tab === k, onclick(){ setTab(k); }}, l)));
+}
+function setTab(t){
+  state.tab = t; state.deck = null; renderNav();
+  if (t === 'stats') { renderStats(); show('stats'); } else { renderHome(); show('home'); }
+}
+function refreshView(){ if (!$('#quiz').hidden || !$('#result').hidden) return; if (state.tab === 'stats') renderStats(); else renderHome(); }
+
+const configEl = h('div', {class:'config'});
+function renderConfig(){
+  const d = state.deck; configEl.replaceChildren();
+  if (d.kind === 'vocab') {
+    if (state.mode === 'cloze' && d.items.filter(clozeOf).length < 5) state.mode = 'mix';
+    configEl.append(h('div', null, h('h4', null, 'Type d\'exercice'),
+      h('div', {class:'chips'}, MODES.map(([k,l]) => h('button', {class:'chip', 'aria-pressed': state.mode===k, onclick(){ state.mode=k; renderConfig(); }}, l)))));
+  }
+  const counts = [[10,'10 questions'],[20,'20 questions'],[0,'Tout (' + d.items.length + ')']];
+  configEl.append(h('div', null, h('h4', null, 'Longueur'),
+    h('div', {class:'chips'}, counts.map(([k,l]) => h('button', {class:'chip', 'aria-pressed': state.count===k, onclick(){ state.count=k; renderConfig(); }}, l)))));
+  const last = lastSession(d.id), tries = prog.sessions.filter(s => s.d === d.id).length;
+  const resetBtn = h('button', {class:'btn ghost', onclick(){
+    prog.reset[d.id] = Date.now(); delete prog.items[d.id]; schedulePush(); renderHome(); }}, 'Repartir de zéro');
+  configEl.append(h('div', {class:'row'}, h('button', {class:'btn', onclick: start}, 'Commencer'), resetBtn));
+  if (last) configEl.append(h('div', {class:'hint'}, 'Dernière tentative : ' + last.s + ' / ' + last.n + ' · ' + tries + ' tentative' + (tries > 1 ? 's' : '')));
+}
+function selectDeck(d, row, keep){
+  state.deck = d; if (!keep) { state.mode = 'mix'; state.count = 10; }
+  document.querySelectorAll('.deck').forEach(b => b.setAttribute('aria-pressed', b === row));
+  renderConfig(); row.after(configEl);
+}
+const MEMO = [
+  ['Présent simple','sujet + base (+ s à la 3e pers.)','every day, usually, always, often','She works every day.'],
+  ['Présent continu','am / is / are + V-ing','now, at the moment, this week, Look!','I am working now.'],
+  ['Past simple','V-ed ou forme irrégulière','yesterday, last year, ago, in 2019','She visited Rome last year.'],
+  ['Past continuous','was / were + V-ing','while, when (action interrompue)','I was reading when you called.'],
+  ['Present perfect','have / has + participe passé','ever, never, just, already, yet, for, since','I have been to New York.'],
+  ['Futur avec will','will + base','décision spontanée, promesse, prévision sans preuve','I will help you.'],
+  ['Be going to','am / is / are going to + base','intention décidée, prévision avec indice','It is going to rain.'],
+  ['Futur planifié','présent continu','agenda, rendez-vous, voyage','We are leaving tomorrow.'],
+  ['Horaire officiel','présent simple','trains, programmes','The train leaves at 6 pm.'],
+  ['Future continuous','will be + V-ing','à tel moment futur','At 8 I will be working.'],
+  ['Future perfect','will have + participe passé','by + date','By next year I will have graduated.'],
+  ['Future perfect continuous','will have been + V-ing','by noon, for 5 hours','By noon I will have been driving for 6 hours.']
+];
+function memoEl(){
+  return h('details', {class:'memo'}, h('summary', null, 'Mémo des temps (cours avec Joseph)'),
+    h('div', {class:'scroll'}, h('table', null,
+      h('thead', null, h('tr', null, ['Temps','Forme','Indices','Exemple'].map(x => h('th', null, x)))),
+      h('tbody', null, MEMO.map(r => h('tr', null, r.map(x => h('td', null, x))))))));
+}
+function renderHome(){
+  const home = $('#home'); home.replaceChildren();
+  const decks = DECKS.filter(d => (d.section || 'vocab') === state.tab);
+  const groups = [...new Set(decks.map(d => d.group))];
+  const rowOf = new Map();
+  groups.forEach((g, gi) => {
+    const box = h('div', {class:'group'}, h('h2', null, g));
+    if (state.tab === 'tv' && gi === 0) box.append(memoEl());
+    decks.filter(d => d.group === g).forEach(d => {
+      const st = deckStats(d);
+      const row = h('button', {class:'deck', 'aria-pressed':false, onclick(){ selectDeck(d, row); }},
+        h('h3', null, d.title), h('p', null, d.desc),
+        h('div', {class:'meta'}, h('b', null, String(d.items.length)), d.kind==='vocab'?'mots':d.kind==='verbs'?'verbes':d.kind==='conj'?'phrases':'questions'),
+        h('div', {class:'mini'}, stackBar(st, d.items.length)));
+      rowOf.set(d, row); box.append(row);
+    });
+    home.append(box);
+  });
+  const keep = !!state.deck && decks.includes(state.deck);
+  const target = keep ? state.deck : decks[0];
+  if (target) selectDeck(target, rowOf.get(target), keep);
+}
+function stackBar(st, total){
+  const seg = (cls, n) => h('i', {class:cls, style:'width:' + (total ? n/total*100 : 0) + '%'});
+  return h('div', {class:'stack', role:'img', 'aria-label': st.mastered + ' maîtrisés, ' + st.learning + ' en cours, ' + st.wrong + ' à revoir, ' + st.new + ' non vus'},
+    seg('s-m', st.mastered), seg('s-l', st.learning), seg('s-w', st.wrong));
+}
+
+/* =============== stats =============== */
+function describe(d, it){
+  if (d.kind === 'vocab') return it[0] + ' — ' + it[1];
+  if (d.kind === 'verbs') return it[0] + ' — ' + it[2] + ' — ' + it[3];
+  if (d.kind === 'conj') return it[0] + '  →  ' + it[2][0];
+  return it.p;
+}
+function wrongPool(){
+  const pool = [];
+  DECKS.forEach(d => { const m = prog.items[d.id] || {}; d.items.forEach(it => { const r = m[itemKey(it)]; if (r && r[1]) pool.push([d, it]); }); });
+  return pool;
+}
+function fmtDate(t){ const x = new Date(t); return x.toLocaleDateString('fr-FR', {day:'numeric', month:'short'}) + ' ' + x.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); }
+function renderStats(){
+  const box = $('#stats'); box.replaceChildren();
+  const S = prog.sessions, N = S.reduce((a,s) => a + s.n, 0), C = S.reduce((a,s) => a + s.s, 0);
+  let mast = 0, total = 0; DECKS.forEach(d => { const st = deckStats(d); mast += st.mastered; total += d.items.length; });
+  box.append(h('div', {class:'tiles'},
+    tile(String(S.length), 'Tentatives'), tile(String(N), 'Questions'),
+    tile(N ? Math.round(C/N*100) + ' %' : '—', 'Réussite'), tile(mast + ' / ' + total, 'Maîtrisés')));
+  if (!S.length) {
+    box.append(h('div', {class:'empty'}, 'Aucune tentative pour l\'instant. Fais une première série : tes scores, tes mots maîtrisés et tes erreurs apparaîtront ici.'));
+  } else {
+    const last = S.slice(-14);
+    box.append(h('div', {class:'sec'}, h('h2', null, 'Les ' + last.length + ' dernières tentatives'),
+      h('div', {class:'chart', role:'img', 'aria-label':'Scores des dernières tentatives, de la plus ancienne à la plus récente'},
+        last.map(s => { const p = Math.round(s.s/s.n*100);
+          return h('div', {title: deckTitle(s.d) + ' : ' + s.s + '/' + s.n},
+            h('i', {style:'height:' + Math.max(p,3) + '%;background:' + (p >= 80 ? 'var(--ok)' : p >= 50 ? 'var(--accent)' : 'var(--bad)')}), h('small', null, String(p))); })),
+      h('div', {class:'hint'}, 'Score en %, de la plus ancienne (à gauche) à la plus récente.')));
+    box.append(h('div', {class:'sec'}, h('h2', null, 'Historique'),
+      h('ul', {class:'hist'}, S.slice(-12).reverse().map(s => h('li', null,
+        h('span', {class:'d'}, fmtDate(s.t)),
+        h('span', {class:'n'}, deckTitle(s.d), s.m && MODE_LABEL[s.m] ? h('small', null, MODE_LABEL[s.m]) : null),
+        h('span', {class:'p'}, s.s + ' / ' + s.n))))));
+  }
+  const pool = wrongPool();
+  const rev = h('div', {class:'sec'}, h('h2', null, 'À revoir (' + pool.length + ')'));
+  if (pool.length) {
+    rev.append(h('ul', {class:'miss'}, shuffle(pool).slice(0,10).map(([d,it]) => h('li', null,
+      h('div', {class:'q'}, describe(d, it)), h('div', {class:'a'}, deckTitle(d.id))))));
+    rev.append(h('div', {class:'row'}, h('button', {class:'btn', onclick: startReview}, 'Réviser mes erreurs'),
+      pool.length > 10 ? h('span', {class:'hint'}, '10 affichées sur ' + pool.length) : null));
+  } else rev.append(h('div', {class:'empty'}, 'Rien à revoir pour l\'instant.'));
+  box.append(rev);
+  const sec = h('div', {class:'sec'}, h('h2', null, 'Progression par série'));
+  [['vocab','Vocabulaire'],['tv','Temps et verbes']].forEach(([k,l]) => {
+    DECKS.filter(d => (d.section || 'vocab') === k).forEach(d => {
+      const st = deckStats(d);
+      sec.append(h('div', {class:'dk'},
+        h('div', {class:'t'}, h('span', null, d.title), h('span', null, st.mastered + ' / ' + d.items.length + ' maîtrisés')),
+        stackBar(st, d.items.length),
+        h('div', {class:'lg'}, st.learning + ' en cours · ' + st.wrong + ' à revoir · ' + st.new + ' non vus')));
+    });
+  });
+  sec.append(h('div', {class:'hint'}, 'Maîtrisé = 3 bonnes réponses d\'affilée. Vert : maîtrisé, turquoise : en cours, rouge : à revoir.'));
+  box.append(sec);
+  const wipe = h('button', {class:'btn ghost danger', onclick(){
+    if (!wipe.dataset.sure) { wipe.dataset.sure = '1'; wipe.textContent = 'Confirmer : tout effacer'; return; }
+    prog = {items:{}, sessions:[], reset:{'*':Date.now()}}; saveLocal(); clearTimeout(pushTimer); pushCloud(); renderStats(); }}, 'Effacer tout mon historique');
+  box.append(h('div', {class:'row'}, wipe));
+  box.append(backupBox());
+}
+function backupBox(){
+  const msg = h('p', {class:'hint', role:'status'});
+  const file = h('input', {type:'file', accept:'application/json,.json', hidden:true, onchange(){
+    const f = file.files[0]; if (!f) return;
+    f.text().then(txt => { const j = JSON.parse(txt); if (!j || !j.items) throw 0; merge(j); saveLocal(); renderStats(); })
+      .catch(() => { msg.textContent = 'Fichier non reconnu.'; }); }});
+  return h('div', {class:'sec'}, h('h3', null, 'Sauvegarde'),
+    h('p', {class:'hint'}, 'Tes progrès sont stockés sur cet iPhone. Exporte un fichier de sauvegarde de temps en temps, et importe-le pour les retrouver sur un autre appareil.'),
+    h('div', {class:'row'},
+      h('button', {class:'btn ghost', onclick(){
+        const blob = new Blob([JSON.stringify({v:2, items:prog.items, sessions:prog.sessions, reset:prog.reset})], {type:'application/json'});
+        const a = h('a', {href:URL.createObjectURL(blob), download:'progres-anglais-' + new Date().toISOString().slice(0,10) + '.json'});
+        document.body.append(a); a.click(); a.remove(); msg.textContent = 'Sauvegarde exportée.'; }}, 'Exporter mes progrès'),
+      h('button', {class:'btn ghost', onclick(){ file.click(); }}, 'Importer une sauvegarde'), file), msg);
+}
+function tile(v, l){ return h('div', {class:'tile'}, h('b', null, v), h('span', null, l)); }
+
+/* =============== quiz =============== */
+function runQuiz(o){
+  quiz = {qs:o.qs, i:0, results:[], id:o.id, title:o.title, mode:o.mode || '', again:o.again, retry:!!o.retry, logged:false};
+  show('quiz'); showQ();
+}
+function start(){
+  const d = state.deck;
+  runQuiz({qs: buildQuiz(d, state.mode, state.count), id:d.id, title:d.title, mode: d.kind === 'vocab' ? state.mode : '', again:start});
+}
+function startReview(){
+  const chosen = shuffle(wrongPool()).slice(0,20);
+  if (!chosen.length) return;
+  runQuiz({qs: chosen.map(([d,it]) => questionsFor(d, 'mix', [it])[0]), id:'review', title:'Révision des erreurs', mode:'', again:startReview});
+}
+function showQ(){
+  const q = quiz.qs[quiz.i], box = $('#quiz'); box.replaceChildren();
+  const card = h('div', {class:'quiz'});
+  card.append(h('div', {class:'top'}, h('span', null, 'Question ' + (quiz.i+1) + ' / ' + quiz.qs.length),
+    h('button', {class:'chip', onclick: quit}, 'Quitter')));
+  card.append(h('div', {class:'bar', role:'progressbar', 'aria-valuemin':0, 'aria-valuemax':quiz.qs.length, 'aria-valuenow':quiz.i}, h('i', {style:'width:'+(quiz.i/quiz.qs.length*100)+'%'})));
+  card.append(h('div', null, h('span', {class:'tag'}, q.tag)));
+  card.append(h('div', {class:'prompt'}, q.prompt));
+  card.append(h('p', {class:'sub'}, q.sub));
+  const fb = h('div', {'aria-live':'polite'});
+  let answered = false;
+  const nextBtn = h('button', {class:'btn', onclick: next}, quiz.i === quiz.qs.length-1 ? 'Voir le score' : 'Suivant');
+  nextBtn.hidden = true;
+  const finish = (ok, given, extra) => {
+    answered = true; quiz.results.push({q, ok, given}); record(q.deckId, q.key, ok);
+    fb.replaceChildren(h('div', {class:'fb ' + (ok?'ok':'bad')},
+      h('b', null, ok ? 'Correct.' : 'Pas tout à fait.'),
+      ok ? null : h('div', null, 'Bonne réponse : ', h('b', null, q.answerText)),
+      (!ok && extra) ? h('div', null, 'Ta réponse : ' + extra) : null,
+      q.explain ? h('div', {class:'ex'}, q.explain) : null));
+    nextBtn.hidden = false; nextBtn.focus();
+  };
+  if (q.type === 'choice') {
+    const opts = h('div', {class:'opts'});
+    q.options.forEach((o, idx) => {
+      const b = h('button', {class:'opt', onclick(){
+        if (answered) return;
+        opts.querySelectorAll('button').forEach((x,j) => { x.disabled = true; if (j===q.correct) x.classList.add('ok'); });
+        if (idx !== q.correct) b.classList.add('bad');
+        finish(idx === q.correct, o, q.info ? q.info(o) : '« ' + o + ' »');
+      }}, o);
+      opts.append(b);
+    });
+    card.append(opts, fb, h('div', {class:'row'}, nextBtn));
+  } else {
+    const fields = h('div', {class:'fields'});
+    const inputs = q.fields.map((f, i) => {
+      const inp = h('input', {id:'f'+i, type:'text', autocomplete:'off', autocapitalize:'off', autocorrect:'off', spellcheck:'false'});
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); answered ? next() : check(); } });
+      fields.append(h('div', {class:'field'}, h('label', {for:'f'+i}, f.label), inp));
+      return inp;
+    });
+    const hint = h('div', {class:'hint'});
+    const checkBtn = h('button', {class:'btn', onclick: check}, 'Valider');
+    const hintBtn = h('button', {class:'btn ghost', onclick(){ hint.textContent = 'Indice : ' + q.hint; }}, 'Indice');
+    function check(){
+      if (answered) return;
+      let all = true;
+      inputs.forEach((inp, i) => {
+        const ok = q.fields[i].answers.includes(norm(inp.value));
+        inp.classList.add(ok ? 'ok' : 'bad'); inp.readOnly = true; if (!ok) all = false;
+      });
+      checkBtn.hidden = true; hintBtn.hidden = true;
+      const typed = inputs.map(i => i.value).join(' · ');
+      finish(all, typed, (!all && q.info && inputs[0].value.trim()) ? (q.fields.length === 1 ? q.info(inputs[0].value) : typed) : (!all && inputs[0].value.trim() ? '« ' + typed + ' »' : null));
+    }
+    card.append(fields, hint, fb, h('div', {class:'row'}, checkBtn, hintBtn, nextBtn));
+    setTimeout(() => inputs[0].focus(), 0);
+  }
+  box.append(card);
+}
+function next(){
+  quiz.i++;
+  if (quiz.i >= quiz.qs.length) return showResult();
+  showQ(); window.scrollTo(0,0);
+}
+function quit(){
+  logSession(); quiz = null;
+  if (state.tab === 'stats') { renderStats(); show('stats'); } else { renderHome(); show('home'); }
+}
+function showResult(){
+  logSession();
+  const box = $('#result'); box.replaceChildren();
+  const good = quiz.results.filter(r => r.ok).length, total = quiz.results.length;
+  const missed = quiz.results.filter(r => !r.ok);
+  const pct = Math.round(good/total*100);
+  const msg = pct >= 90 ? 'Très solide.' : pct >= 70 ? 'Bonne base, reste quelques points à fixer.' : pct >= 50 ? 'En progrès. Refais les erreurs pour les ancrer.' : 'Ça demande encore du travail. Refais les erreurs, puis une nouvelle série.';
+  const card = h('div', {class:'result'},
+    h('div', {class:'eyebrow'}, quiz.title),
+    h('div', {class:'score'}, String(good), h('small', null, ' / ' + total)),
+    h('p', {class:'sub'}, msg));
+  if (missed.length) {
+    card.append(h('h3', null, 'À revoir (' + missed.length + ')'),
+      h('ul', {class:'miss'}, missed.map(r => h('li', null,
+        h('div', {class:'q'}, r.q.prompt),
+        h('div', {class:'a'}, 'Réponse : ' + r.q.answerText + (r.given ? '   (ta réponse : ' + r.given + ')' : ''))))));
+  }
+  const row = h('div', {class:'row'});
+  const again = quiz.again, id = quiz.id, title = quiz.title;
+  if (missed.length) row.append(h('button', {class:'btn', onclick(){
+    runQuiz({qs: missed.map(r => r.q), id, title, mode:'', again, retry:true});
+  }}, 'Refaire les erreurs'));
+  row.append(h('button', {class:missed.length?'btn ghost':'btn', onclick: again}, 'Nouvelle série'),
+    h('button', {class:'btn ghost', onclick(){ quiz = null; setTab(state.tab === 'stats' ? 'stats' : state.tab); }}, 'Retour'));
+  card.append(row); box.append(card); show('result');
+}
+
+renderNav(); renderHome(); show('home'); setSync('local'); initCloud();
+</script>
+<script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+</body>
+</html>
