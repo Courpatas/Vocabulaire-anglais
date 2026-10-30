@@ -96,7 +96,10 @@ td:first-child{font-weight:600;white-space:nowrap}
 .opt:disabled{cursor:default;color:var(--fg)}
 .fields{display:grid;gap:12px}
 .field label{display:block;font:500 .75rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.field input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:1.1rem var(--font-body)}
+.field .wrap{position:relative}
+.field input{width:100%;min-height:68px;padding:16px 56px 16px 16px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:1.5rem var(--font-body);touch-action:manipulation}
+.field .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--muted);font-size:1.4rem;cursor:pointer}
+.field .clr[hidden]{display:none}
 .field input.ok{border-color:var(--ok);background:var(--ok-soft)}
 .field input.bad{border-color:var(--bad);background:var(--bad-soft)}
 .fb{padding:12px 14px;border-radius:8px;font-size:.95rem}
@@ -1064,9 +1067,11 @@ function showQ(){
   } else {
     const fields = h('div', {class:'fields'});
     const inputs = q.fields.map((f, i) => {
-      const inp = h('input', {id:'f'+i, type:'text', autocomplete:'off', autocapitalize:'off', autocorrect:'off', spellcheck:'false'});
+      const inp = h('input', {id:'f'+i, type:'text', lang:'en', enterkeyhint:'done', autocomplete:'off', autocapitalize:'off', autocorrect:'off', spellcheck:'false'});
+      const clr = h('button', {type:'button', class:'clr', hidden:true, 'aria-label':'Effacer', onclick(){ if (inp.readOnly) return; inp.value = ''; clr.hidden = true; inp.focus(); }}, '\u2715');
+      inp.addEventListener('input', () => { clr.hidden = !inp.value; });
       inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); answered ? next() : check(); } });
-      fields.append(h('div', {class:'field'}, h('label', {for:'f'+i}, f.label), inp));
+      fields.append(h('div', {class:'field'}, h('label', {for:'f'+i}, f.label), h('div', {class:'wrap'}, inp, clr)));
       return inp;
     });
     const hint = h('div', {class:'hint'});
@@ -1077,7 +1082,7 @@ function showQ(){
       let all = true;
       inputs.forEach((inp, i) => {
         const ok = q.fields[i].answers.includes(norm(inp.value));
-        inp.classList.add(ok ? 'ok' : 'bad'); inp.readOnly = true; if (!ok) all = false;
+        inp.classList.add(ok ? 'ok' : 'bad'); inp.readOnly = true; inp.nextSibling && (inp.nextSibling.hidden = true); if (!ok) all = false;
       });
       checkBtn.hidden = true; hintBtn.hidden = true;
       const typed = inputs.map(i => i.value).join(' · ');
