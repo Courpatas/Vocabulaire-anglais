@@ -648,6 +648,462 @@ if (typeof module !== 'undefined') module.exports = DECKS;
   mv('verbes', 'tpsErr'); mv('joseph', null);
 })();
 
+/* 8 decks x 50 phrases à compléter : présent, passé, present perfect, futurs. Format de ligne : phrase ~ verbe(s) ~ réponse(s) séparées par | */
+(function(){
+  const NEG = [["won't","will not"],["don't","do not"],["doesn't","does not"],["didn't","did not"],["isn't","is not"],["aren't","are not"],["wasn't","was not"],["weren't","were not"],["haven't","have not"],["hasn't","has not"]];
+  const expand = (a) => { const out = new Set([a]);
+    NEG.forEach(([c,f]) => { [...out].forEach(x => { if (x.includes(c)) out.add(x.replace(c,f)); }); });
+    return [...out]; };
+  const build = (lines, expl, withLl) => lines.trim().split('\n').map(l => {
+    const [s, v, a] = l.split(' ~ ').map(x => x.trim());
+    let ans = []; a.split('|').forEach(x => ans.push(...expand(x.trim().toLowerCase())));
+    if (withLl) ans.slice().forEach(x => { if (/^will /.test(x) && /\b(I|He|She|We|They|You|It) ___/.test(s)) ans.push("'ll " + x.slice(5)); });
+    return [s, 'Verbe : ' + v, [...new Set(ans)], expl(s, ans[0], ans)];
+  });
+  const isNeg = a => /n't|\bnot\b/.test(a);
+  const isQ = (a, s) => /\?$/.test(s) && /^(do|does|did|is|are|was|were|have|has|will|am) (you|he|she|it|they|we|i|the|your|this|my)\b/.test(a);
+
+  const ps = build(`
+My sister ___ (work) in a hospital. ~ work ~ works
+We ___ (play) football every Sunday. ~ play ~ play
+He ___ (not eat) meat. ~ not eat ~ doesn't eat
+___ (you / speak) Spanish? ~ you / speak ~ do you speak
+The shop ___ (open) at nine. ~ open ~ opens
+They ___ (not live) in Papeete. ~ not live ~ don't live
+Water ___ (boil) at 100 degrees. ~ boil ~ boils
+What time ___ (the film / start)? ~ the film / start ~ does the film start
+She ___ (go) to school by bus. ~ go ~ goes
+I ___ (watch) the news every evening. ~ watch ~ watch
+My dad ___ (fix) cars. ~ fix ~ fixes
+Fish ___ (not fly). ~ not fly ~ don't fly
+___ (he / play) the guitar? ~ he / play ~ does he play
+She always ___ (study) before an exam. ~ study ~ studies
+The bus ___ (leave) at 7:30 every morning. ~ leave ~ leaves
+We usually ___ (have) lunch at noon. ~ have ~ have
+He ___ (have) two brothers. ~ have ~ has
+Where ___ (your parents / live)? ~ your parents / live ~ do your parents live
+My cat ___ (sleep) all day. ~ sleep ~ sleeps
+I ___ (not understand) this word. ~ not understand ~ don't understand
+Tom ___ (not do) his homework on Fridays. ~ not do ~ doesn't do
+___ (it / rain) a lot in winter here? ~ it / rain ~ does it rain
+She ___ (teach) English at a school. ~ teach ~ teaches
+The Earth ___ (go) around the sun. ~ go ~ goes
+My friends ___ (love) pizza. ~ love ~ love
+How often ___ (you / swim)? ~ you / swim ~ do you swim
+He never ___ (drink) coffee. ~ drink ~ drinks
+They ___ (not like) horror films. ~ not like ~ don't like
+The train ___ (arrive) at 6 p.m. ~ arrive ~ arrives
+She ___ (wash) her car on Saturdays. ~ wash ~ washes
+Why ___ (he / need) a visa? ~ he / need ~ does he need
+I ___ (take) the bus to work. ~ take ~ take
+Our teacher ___ (not give) much homework. ~ not give ~ doesn't give
+___ (they / work) on weekends? ~ they / work ~ do they work
+The sun ___ (set) in the west. ~ set ~ sets
+My brother ___ (cook) dinner on Mondays. ~ cook ~ cooks
+We ___ (not watch) TV in the morning. ~ not watch ~ don't watch
+What ___ (this word / mean)? ~ this word / mean ~ does this word mean
+He often ___ (miss) the bus. ~ miss ~ misses
+Children ___ (need) a lot of sleep. ~ need ~ need
+She ___ (carry) a big bag every day. ~ carry ~ carries
+I ___ (not know) his name. ~ not know ~ don't know
+When ___ (the shops / close)? ~ the shops / close ~ do the shops close
+The lesson ___ (finish) at four. ~ finish ~ finishes
+My mother ___ (fly) to Paris twice a year. ~ fly ~ flies
+This soup ___ (taste) great. ~ taste ~ tastes
+We ___ (not own) a car. ~ not own ~ don't own
+___ (she / ride) a bike to work? ~ she / ride ~ does she ride
+Ice ___ (melt) in the sun. ~ melt ~ melts
+He ___ (try) to run every morning. ~ try ~ tries
+`, (s,a) => isNeg(a) ? "Négation : do/does + not + base." : isQ(a, s) ? "Question : do/does + sujet + base." : /(s|es)$/.test(a) && a.split(' ').length === 1 ? "Présent simple, 3e personne du singulier : -s / -es (study → studies)." : "Présent simple : habitude, fait général ou horaire.");
+
+  const pc = build(`
+Look! It ___ (rain). ~ rain ~ is raining
+I ___ (read) a book at the moment. ~ read ~ am reading
+They ___ (not watch) TV right now. ~ not watch ~ aren't watching
+What ___ (you / do)? ~ you / do ~ are you doing
+She ___ (talk) on the phone now. ~ talk ~ is talking
+We ___ (wait) for the bus. ~ wait ~ are waiting
+He ___ (not work) today. ~ not work ~ isn't working
+___ (it / snow) outside? ~ it / snow ~ is it snowing
+The children ___ (sleep) at the moment. ~ sleep ~ are sleeping
+I ___ (cook) dinner. Don't come in. ~ cook ~ am cooking
+Why ___ (you / laugh)? ~ you / laugh ~ are you laughing
+My brother ___ (study) for his exams this month. ~ study ~ is studying
+She ___ (wear) a red dress today. ~ wear ~ is wearing
+They ___ (build) a new bridge in town. ~ build ~ are building
+He ___ (not feel) well today. ~ not feel ~ isn't feeling
+Where ___ (they / go)? ~ they / go ~ are they going
+The baby ___ (cry). ~ cry ~ is crying
+We ___ (have) dinner now. ~ have ~ are having
+Listen! Someone ___ (sing). ~ sing ~ is singing
+You ___ (not listen) to me. ~ not listen ~ aren't listening
+___ (she / use) the computer? ~ she / use ~ is she using
+The sun ___ (shine) today. ~ shine ~ is shining
+I ___ (learn) to surf this year. ~ learn ~ am learning
+Prices ___ (rise) quickly these days. ~ rise ~ are rising
+He ___ (run) in the park right now. ~ run ~ is running
+My parents ___ (visit) us this week. ~ visit ~ are visiting
+What ___ (he / read)? ~ he / read ~ is he reading
+We ___ (not use) the car this week. ~ not use ~ aren't using
+The students ___ (take) a test now. ~ take ~ are taking
+She ___ (look) for her keys. ~ look ~ is looking
+___ (you / enjoy) the party? ~ you / enjoy ~ are you enjoying
+It ___ (get) dark. ~ get ~ is getting
+They ___ (play) cards in the garden. ~ play ~ are playing
+I ___ (write) an email. ~ write ~ am writing
+He ___ (swim) in the lagoon now. ~ swim ~ is swimming
+The phone ___ (ring). Can you answer? ~ ring ~ is ringing
+My sister ___ (not sit) here today. ~ not sit ~ isn't sitting
+Who ___ (she / talk) to? ~ she / talk ~ is she talking
+The weather ___ (change) fast. ~ change ~ is changing
+We ___ (stay) at a friend's house this week. ~ stay ~ are staying
+He ___ (drive) to work today because of the rain. ~ drive ~ is driving
+You ___ (make) a lot of noise! ~ make ~ are making
+___ (the kids / do) their homework? ~ the kids / do ~ are the kids doing
+I ___ (try) to concentrate. ~ try ~ am trying
+She ___ (not study) at the moment. ~ not study ~ isn't studying
+The company ___ (grow) fast this year. ~ grow ~ is growing
+Look at him! He ___ (dance). ~ dance ~ is dancing
+What ___ (the teacher / say)? ~ the teacher / say ~ is the teacher saying
+They ___ (paint) the walls this week. ~ paint ~ are painting
+We ___ (not do) anything right now. ~ not do ~ aren't doing
+`, (s,a) => isNeg(a) ? "Négation : am/is/are + not + V-ing." : isQ(a, s) ? "Question : am/is/are + sujet + V-ing." : "Présent continu : am/is/are + V-ing (action en cours ou situation temporaire).");
+
+  const pa = build(`
+She ___ (visit) Rome last year. ~ visit ~ visited
+I ___ (see) him yesterday. ~ see ~ saw
+They ___ (not come) to the party. ~ not come ~ didn't come
+___ (you / buy) a new phone last week? ~ you / buy ~ did you buy
+We ___ (go) to the beach on Sunday. ~ go ~ went
+He ___ (study) all night. ~ study ~ studied
+The film ___ (start) at eight. ~ start ~ started
+Where ___ (she / grow up)? ~ she / grow up ~ did she grow up
+I ___ (not sleep) well last night. ~ not sleep ~ didn't sleep
+My dad ___ (drive) us to school. ~ drive ~ drove
+She ___ (write) a letter to her friend. ~ write ~ wrote
+We ___ (eat) fish for dinner. ~ eat ~ ate
+When ___ (they / arrive)? ~ they / arrive ~ did they arrive
+He ___ (lose) his keys yesterday. ~ lose ~ lost
+The teacher ___ (give) us a test on Monday. ~ give ~ gave
+I ___ (meet) her in 2019. ~ meet ~ met
+They ___ (not know) the answer. ~ not know ~ didn't know
+___ (he / pass) the exam? ~ he / pass ~ did he pass
+She ___ (take) a photo of the lagoon. ~ take ~ took
+We ___ (stop) at a café. ~ stop ~ stopped
+The children ___ (run) home. ~ run ~ ran
+Who ___ (break) the window? ~ break ~ broke
+I ___ (feel) sick yesterday. ~ feel ~ felt
+He ___ (not tell) me the truth. ~ not tell ~ didn't tell
+What ___ (you / say)? ~ you / say ~ did you say
+She ___ (cry) when she heard the news. ~ cry ~ cried
+They ___ (build) this house in 1990. ~ build ~ built
+I ___ (forget) my password. ~ forget ~ forgot
+We ___ (not see) the match. ~ not see ~ didn't see
+He ___ (put) the book on the table. ~ put ~ put
+How much ___ (it / cost)? ~ it / cost ~ did it cost
+The plane ___ (land) at six. ~ land ~ landed
+She ___ (sing) beautifully at the concert. ~ sing ~ sang
+I ___ (hear) a strange noise last night. ~ hear ~ heard
+My uncle ___ (come) back from Paris on Friday. ~ come ~ came
+They ___ (not win) the game. ~ not win ~ didn't win
+Why ___ (you / leave) early? ~ you / leave ~ did you leave
+He ___ (swim) across the bay. ~ swim ~ swam
+She ___ (open) the window. ~ open ~ opened
+We ___ (leave) at noon. ~ leave ~ left
+I ___ (think) about you yesterday. ~ think ~ thought
+The shop ___ (not open) on Monday. ~ not open ~ didn't open
+They ___ (stay) in a small hotel. ~ stay ~ stayed
+He ___ (catch) the last bus. ~ catch ~ caught
+___ (she / find) her wallet? ~ she / find ~ did she find
+We ___ (spend) a week in Moorea. ~ spend ~ spent
+I ___ (wake up) at six this morning. ~ wake up ~ woke up
+He ___ (pay) by card. ~ pay ~ paid
+The dog ___ (bite) the postman. ~ bite ~ bit
+He ___ (teach) English in 2015. ~ teach ~ taught
+`, (s,a) => isNeg(a) ? "Négation au passé : didn't + base (pas de -ed)." : isQ(a, s) ? "Question au passé : did + sujet + base." : /ed$/.test(a) ? "Past simple régulier : base + -ed (study → studied, stop → stopped)." : "Past simple irrégulier : forme à apprendre (voir la liste des verbes irréguliers).");
+
+  const pco = build(`
+I ___ (read) when you called. ~ read ~ was reading
+She ___ (cook) while he was watching TV. ~ cook ~ was cooking
+They ___ (not listen) to the teacher. ~ not listen ~ weren't listening
+What ___ (you / do) at 8 last night? ~ you / do ~ were you doing
+It ___ (rain) when we left. ~ rain ~ was raining
+We ___ (walk) home when it started to rain. ~ walk ~ were walking
+He ___ (sleep) when the phone rang. ~ sleep ~ was sleeping
+___ (she / work) at that time? ~ she / work ~ was she working
+The kids ___ (play) outside all afternoon. ~ play ~ were playing
+I ___ (not pay) attention. ~ not pay ~ wasn't paying
+At noon, they ___ (have) lunch. ~ have ~ were having
+While I ___ (study), my brother was playing music. ~ study ~ was studying
+He ___ (drive) too fast when he had the accident. ~ drive ~ was driving
+Where ___ (they / go) when you saw them? ~ they / go ~ were they going
+She ___ (wear) a blue coat yesterday afternoon. ~ wear ~ was wearing
+We ___ (wait) for the bus when she arrived. ~ wait ~ were waiting
+The sun ___ (shine) when I woke up. ~ shine ~ was shining
+I ___ (cross) the street when I fell. ~ cross ~ was crossing
+___ (you / listen) to music when I came in? ~ you / listen ~ were you listening
+He ___ (not look) where he was going. ~ not look ~ wasn't looking
+The band ___ (play) when the fire started. ~ play ~ was playing
+They ___ (argue) all evening. ~ argue ~ were arguing
+She ___ (talk) on the phone when I came. ~ talk ~ was talking
+I ___ (think) about you when you called. ~ think ~ was thinking
+What ___ (he / read) at that moment? ~ he / read ~ was he reading
+The students ___ (take) a test at ten. ~ take ~ were taking
+We ___ (not sleep) when the storm began. ~ not sleep ~ weren't sleeping
+It ___ (get) dark as we walked home. ~ get ~ was getting
+He ___ (cut) the grass when it began to rain. ~ cut ~ was cutting
+Who ___ (she / talk) to? ~ she / talk ~ was she talking
+I ___ (clean) the kitchen at six. ~ clean ~ was cleaning
+They ___ (build) a bridge when I visited the town. ~ build ~ were building
+She ___ (laugh) loudly when I walked in. ~ laugh ~ was laughing
+The phone rang while I ___ (take) a shower. ~ take ~ was taking
+At nine last night, we ___ (not do) anything special. ~ not do ~ weren't doing
+He ___ (jog) in the park when he met her. ~ jog ~ was jogging
+___ (it / snow) when you left? ~ it / snow ~ was it snowing
+They ___ (watch) a film at 9 p.m. ~ watch ~ were watching
+I ___ (look) for my glasses when you called. ~ look ~ was looking
+She ___ (wait) outside when I arrived. ~ wait ~ was waiting
+The baby ___ (cry) all night. ~ cry ~ was crying
+While we ___ (eat), the lights went out. ~ eat ~ were eating
+He ___ (not wear) his seatbelt. ~ not wear ~ wasn't wearing
+My parents ___ (stay) in Rome at this time last year. ~ stay ~ were staying
+She ___ (drive) home when she heard the news. ~ drive ~ was driving
+What ___ (they / talk) about? ~ they / talk ~ were they talking
+I ___ (not feel) well that day. ~ not feel ~ wasn't feeling
+He ___ (ride) his bike when he fell. ~ ride ~ was riding
+The kids ___ (do) their homework when I got home. ~ do ~ were doing
+At sunset, we ___ (sit) on the beach. ~ sit ~ were sitting
+`, (s,a) => isNeg(a) ? "Négation : was/were + not + V-ing." : isQ(a, s) ? "Question : was/were + sujet + V-ing." : "Past continuous : was/were + V-ing (action en cours à un moment du passé, souvent interrompue).");
+
+  const pp = build(`
+I ___ (finish) my homework. ~ finish ~ have finished
+She ___ (just / leave). ~ just / leave ~ has just left
+They ___ (never / be) to Japan. ~ never / be ~ have never been
+___ (you / ever / eat) sushi? ~ you / ever / eat ~ have you ever eaten
+He ___ (live) here since 2015. ~ live ~ has lived
+We ___ (not see) that film yet. ~ not see ~ haven't seen
+I ___ (know) her for ten years. ~ know ~ have known
+She ___ (already / do) the shopping. ~ already / do ~ has already done
+How long ___ (you / work) here? ~ you / work ~ have you worked
+They ___ (lose) their keys. ~ lose ~ have lost
+He ___ (break) his arm. ~ break ~ has broken
+I ___ (not eat) breakfast today. ~ not eat ~ haven't eaten
+___ (she / finish) the report yet? ~ she / finish ~ has she finished
+We ___ (visit) Moorea three times. ~ visit ~ have visited
+It ___ (not rain) for weeks. ~ not rain ~ hasn't rained
+My brother ___ (write) two books. ~ write ~ has written
+I ___ (never / try) oysters. ~ never / try ~ have never tried
+They ___ (just / arrive). ~ just / arrive ~ have just arrived
+She ___ (be) a teacher since 2010. ~ be ~ has been
+What ___ (you / do) today? ~ you / do ~ have you done
+He ___ (already / go) home. ~ already / go ~ has already gone
+We ___ (not meet) our neighbours yet. ~ not meet ~ haven't met
+___ (they / ever / win) a prize? ~ they / ever / win ~ have they ever won
+I ___ (see) this film twice. ~ see ~ have seen
+The price ___ (go) up recently. ~ go ~ has gone
+She ___ (not speak) to him since Monday. ~ not speak ~ hasn't spoken
+I ___ (live) in Papeete for five years. ~ live ~ have lived
+They ___ (take) the exam already. ~ take ~ have taken
+He ___ (drive) 500 km today. ~ drive ~ has driven
+We ___ (have) this car since 2018. ~ have ~ have had
+She ___ (just / call) me. ~ just / call ~ has just called
+___ (you / see) my keys? ~ you / see ~ have you seen
+I ___ (not hear) from him this week. ~ not hear ~ haven't heard
+He ___ (never / lie) to me. ~ never / lie ~ has never lied
+They ___ (move) to a new house. ~ move ~ have moved
+She ___ (read) all his books. ~ read ~ has read
+How many countries ___ (you / visit)? ~ you / visit ~ have you visited
+We ___ (forget) the tickets! ~ forget ~ have forgotten
+It ___ (be) a long day. ~ be ~ has been
+I ___ (just / hear) the news. ~ just / hear ~ have just heard
+He ___ (not finish) his dinner yet. ~ not finish ~ hasn't finished
+She ___ (grow) a lot this year. ~ grow ~ has grown
+They ___ (know) each other since childhood. ~ know ~ have known
+___ (he / pay) the bill? ~ he / pay ~ has he paid
+I ___ (leave) my umbrella on the bus. ~ leave ~ have left
+She ___ (already / eat). ~ already / eat ~ has already eaten
+We ___ (be) friends for years. ~ be ~ have been
+The film ___ (just / begin). ~ just / begin ~ has just begun
+He ___ (win) three medals. ~ win ~ has won
+You ___ (not change) at all! ~ not change ~ haven't changed
+`, (s,a) => isNeg(a) ? "Négation : haven't / hasn't + participe passé." : isQ(a, s) ? "Question : have/has + sujet + participe passé." : /\b(since|for)\b/.test(s) ? "Present perfect avec for / since : situation commencée dans le passé et toujours vraie." : "Present perfect : have/has + participe passé (lien avec le présent, expérience, résultat).");
+
+  const pcp = build(`
+I ___ (wait) for an hour. ~ wait ~ have been waiting
+She ___ (work) here since 2018. ~ work ~ has been working
+They ___ (not sleep) well recently. ~ not sleep ~ haven't been sleeping
+How long ___ (you / learn) English? ~ you / learn ~ have you been learning
+It ___ (rain) all day. ~ rain ~ has been raining
+He ___ (run), so he's out of breath. ~ run ~ has been running
+We ___ (live) here for ten years. ~ live ~ have been living
+___ (she / study) all morning? ~ she / study ~ has she been studying
+I ___ (read) this book since Monday. ~ read ~ have been reading
+The kids ___ (play) outside for hours. ~ play ~ have been playing
+What ___ (you / do) lately? ~ you / do ~ have you been doing
+He ___ (not eat) well this week. ~ not eat ~ hasn't been eating
+She ___ (cry): her eyes are red. ~ cry ~ has been crying
+We ___ (try) to call you all day. ~ try ~ have been trying
+They ___ (build) the house since March. ~ build ~ have been building
+I ___ (not feel) well lately. ~ not feel ~ haven't been feeling
+Why ___ (you / run)? You're covered in sweat. ~ you / run ~ have you been running
+He ___ (teach) for twenty years. ~ teach ~ has been teaching
+It ___ (snow) since morning. ~ snow ~ has been snowing
+My phone ___ (not work) properly lately. ~ not work ~ hasn't been working
+How long ___ (he / wait)? ~ he / wait ~ has he been waiting
+She ___ (look) for a job for months. ~ look ~ has been looking
+We ___ (talk) about this for an hour. ~ talk ~ have been talking
+I ___ (cook) all afternoon. ~ cook ~ have been cooking
+They ___ (argue) all morning. ~ argue ~ have been arguing
+You ___ (work) too hard lately. ~ work ~ have been working
+He ___ (sit) here since eight. ~ sit ~ has been sitting
+___ (they / train) for the race? ~ they / train ~ have they been training
+It ___ (not snow) much this winter. ~ not snow ~ hasn't been snowing
+She ___ (paint) the kitchen all day. ~ paint ~ has been painting
+I ___ (think) about changing jobs. ~ think ~ have been thinking
+The dog ___ (bark) for ages. ~ bark ~ has been barking
+We ___ (not use) the car much. ~ not use ~ haven't been using
+How long ___ (it / rain)? ~ it / rain ~ has it been raining
+He ___ (practise) the piano since five o'clock. ~ practise ~ has been practising|has been practicing
+They ___ (save) money for a trip. ~ save ~ have been saving
+I ___ (not sleep) enough. ~ not sleep ~ haven't been sleeping
+She ___ (wait) for the results all week. ~ wait ~ has been waiting
+What ___ (he / do) in the garden? ~ he / do ~ has he been doing
+We ___ (drive) for six hours. ~ drive ~ have been driving
+The children ___ (watch) TV all evening. ~ watch ~ have been watching
+My eyes hurt because I ___ (look) at screens. ~ look ~ have been looking
+___ (you / swim)? Your hair is wet. ~ you / swim ~ have you been swimming
+She ___ (write) her thesis for two years. ~ write ~ has been writing
+It ___ (get) colder this week. ~ get ~ has been getting
+They ___ (live) in Tahiti since 2020. ~ live ~ have been living
+He ___ (not do) any exercise lately. ~ not do ~ hasn't been doing
+I ___ (clean) the house since breakfast. ~ clean ~ have been cleaning
+How long ___ (you / play) tennis? ~ you / play ~ have you been playing
+She ___ (chat) online for hours. ~ chat ~ has been chatting
+`, (s,a) => isNeg(a) ? "Négation : haven't / hasn't + been + V-ing." : isQ(a, s) ? "Question : have/has + sujet + been + V-ing." : "Present perfect continu : have/has + been + V-ing (action commencée dans le passé qui dure encore ou vient de finir, avec for / since / lately).");
+
+  const fw = build(`
+I'm cold. I ___ (close) the window. ~ close ~ will close
+It ___ (probably / rain) tomorrow. ~ probably / rain ~ will probably rain
+I promise I ___ (not tell) anyone. ~ not tell ~ won't tell
+___ (you / help) me with my bags? ~ you / help ~ will you help
+She ___ (be) 30 next year. ~ be ~ will be
+The phone is ringing. I ___ (answer) it. ~ answer ~ will answer
+I think he ___ (win) the match. ~ win ~ will win
+We ___ (not be) late. ~ not be ~ won't be
+What ___ (you / do) if it rains? ~ you / do ~ will you do
+Don't worry, I ___ (call) you tonight. ~ call ~ will call
+They ___ (not come) to the party, I'm sure. ~ not come ~ won't come
+Perhaps she ___ (call) you later. ~ call ~ will call
+I ___ (carry) that for you. ~ carry ~ will carry
+The exam ___ (be) difficult, I think. ~ be ~ will be
+He ___ (probably / forget) the tickets. ~ probably / forget ~ will probably forget
+___ (it / be) hot tomorrow? ~ it / be ~ will it be
+I ___ (have) the chicken, please. ~ have ~ will have
+If you study, you ___ (pass). ~ pass ~ will pass
+She ___ (never / forgive) him. ~ never / forgive ~ will never forgive
+I ___ (text) you when I arrive. ~ text ~ will text
+We ___ (see) you next week. ~ see ~ will see
+People ___ (live) longer in the future. ~ live ~ will live
+I ___ (not forget) your birthday. ~ not forget ~ won't forget
+Wait here. I ___ (get) the manager. ~ get ~ will get
+How long ___ (the journey / take)? ~ the journey / take ~ will the journey take
+He ___ (not pass) if he doesn't study. ~ not pass ~ won't pass
+I think you ___ (like) this film. ~ like ~ will like
+It's heavy. I ___ (help) you. ~ help ~ will help
+They ___ (be) here at six. ~ be ~ will be
+___ (she / come) to the meeting? ~ she / come ~ will she come
+Don't worry. Everything ___ (be) fine. ~ be ~ will be
+I ___ (pay) for the coffee. ~ pay ~ will pay
+You ___ (not regret) it. ~ not regret ~ won't regret
+The shops ___ (be) closed on Sunday. ~ be ~ will be
+I ___ (take) the red one. ~ take ~ will take
+If it rains, we ___ (stay) at home. ~ stay ~ will stay
+He ___ (be) a great doctor one day. ~ be ~ will be
+I ___ (never / do) that again. ~ never / do ~ will never do
+Who ___ (win) the election, do you think? ~ win ~ will win
+I ___ (open) the door for you. ~ open ~ will open
+She ___ (not like) the surprise. ~ not like ~ won't like
+I ___ (see) what I can do. ~ see ~ will see
+I ___ (send) you the file tonight. ~ send ~ will send
+They ___ (love) the gift, I'm sure. ~ love ~ will love
+___ (you / marry) me? ~ you / marry ~ will you marry
+The plane ___ (arrive) at nine, I expect. ~ arrive ~ will arrive
+I ___ (turn) the music down. ~ turn ~ will turn
+It ___ (not take) long. ~ not take ~ won't take
+We ___ (miss) you. ~ miss ~ will miss
+He says he ___ (not go) without us. ~ not go ~ won't go
+`, (s,a) => isNeg(a) ? "Négation : won't (will not) + base." : isQ(a, s) ? "Question : will + sujet + base." : /\b(probably|never)\b/.test(a) ? "Will + adverbe (probably, never) + base : l'adverbe se place entre will et le verbe." : "Will + base : décision sur le moment, promesse, offre ou prédiction (opinion).", true);
+
+  const fg = build(`
+I ___ (visit) my grandma this weekend; I've already decided. ~ visit ~ am going to visit
+Look at those clouds! It ___ (rain). ~ rain ~ is going to rain
+She ___ (have) a baby in May. ~ have ~ is going to have
+We ___ (not travel) this summer. ~ not travel ~ aren't going to travel
+What ___ (you / do) tonight? ~ you / do ~ are you going to do|are you doing
+I ___ (meet) Paul at 5 o'clock: we've arranged it. ~ meet ~ am meeting|am going to meet
+He ___ (start) a new job on Monday. ~ start ~ is starting|is going to start
+Watch out! You ___ (fall). ~ fall ~ are going to fall
+They ___ (get married) in June; the date is fixed. ~ get married ~ are getting married|are going to get married
+___ (you / come) to the party on Saturday? ~ you / come ~ are you coming|are you going to come
+I ___ (learn) Spanish next year; it's my plan. ~ learn ~ am going to learn
+She ___ (not come) to the meeting tomorrow. ~ not come ~ isn't coming|isn't going to come
+We ___ (have) dinner with friends tonight: it's booked. ~ have ~ are having|are going to have
+He's very tired. He ___ (fall) asleep. ~ fall ~ is going to fall
+I ___ (buy) a new bike. I've saved the money. ~ buy ~ am going to buy
+When ___ (she / leave)? Her flight is booked for Friday. ~ she / leave ~ is she leaving|is she going to leave
+They ___ (build) a new school here; the plans are ready. ~ build ~ are going to build
+We ___ (fly) to Paris on Monday. Here are the tickets. ~ fly ~ are flying|are going to fly
+Look at the teams! It ___ (be) a great match. ~ be ~ is going to be
+She ___ (not eat) anything; she isn't hungry. ~ not eat ~ isn't going to eat
+What ___ (he / study) at university? ~ he / study ~ is he going to study
+We ___ (see) the dentist at 3 p.m. tomorrow. ~ see ~ are seeing|are going to see
+I ___ (paint) the kitchen this weekend; I've bought the paint. ~ paint ~ am going to paint
+The baby ___ (cry). Look at her face! ~ cry ~ is going to cry
+They ___ (move) next month; the van is booked. ~ move ~ are moving|are going to move
+___ (you / stay) at home tonight? ~ you / stay ~ are you going to stay|are you staying
+He ___ (be) a doctor when he grows up; he's decided. ~ be ~ is going to be
+I ___ (play) tennis with Anna at six; we've arranged it. ~ play ~ am playing|am going to play
+She ___ (not take) the exam this year. ~ not take ~ isn't going to take|isn't taking
+The Smiths ___ (host) a party on Friday; invitations are sent. ~ host ~ are hosting|are going to host
+Careful! That glass ___ (break). ~ break ~ is going to break
+We ___ (go) on holiday in August; we've booked it. ~ go ~ are going|are going to go
+Who ___ (you / see) tomorrow? We arranged lunch. ~ you / see ~ are you seeing|are you going to see
+I ___ (write) a book one day; it's my dream. ~ write ~ am going to write
+They ___ (not sell) the house. ~ not sell ~ aren't going to sell
+He ___ (run) a marathon in October; he's registered. ~ run ~ is running|is going to run
+___ (it / rain) tomorrow? Check the forecast. ~ it / rain ~ is it going to rain
+She ___ (call) you later; she told me. ~ call ~ is going to call|is calling
+We ___ (not work) next Monday; it's a holiday. ~ not work ~ aren't working|aren't going to work
+He feels sick. He ___ (be) sick. ~ be ~ is going to be
+They ___ (open) a café in town; they've found a place. ~ open ~ are going to open
+I ___ (see) the doctor on Thursday at ten. ~ see ~ am seeing|am going to see
+Why ___ (you / sell) your car? ~ you / sell ~ are you going to sell|are you selling
+She ___ (give) a presentation on Friday at 2. ~ give ~ is giving|is going to give
+We ___ (adopt) a dog; we've decided. ~ adopt ~ are going to adopt
+He ___ (not wait) any longer. ~ not wait ~ isn't going to wait
+___ (they / come) for dinner on Sunday? ~ they / come ~ are they coming|are they going to come
+My parents ___ (arrive) on Saturday morning; their train is booked. ~ arrive ~ are arriving|are going to arrive
+She ___ (study) medicine after school. ~ study ~ is going to study|is studying
+We ___ (not do) anything special this weekend. ~ not do ~ aren't going to do|aren't doing
+`, (s,a,all) => !(all.some(x => !/going to/.test(x)) && all.some(x => /going to/.test(x))) ? "Be going to + base : intention décidée ou prédiction fondée sur ce qu'on voit." : "Projet arrangé (date, billet, rendez-vous) : present continuous, ou be going to. Les deux sont acceptés.");
+
+  const T = (id, title, desc, items) => ({ id, section:'tv', group:'Phrases à compléter', tag:'Compléter', title, desc, kind:'conj', items });
+  DECKS.push(
+    T('pcPS', 'Présent simple : 50 phrases', 'Habitudes, faits généraux, négations et questions.', ps),
+    T('pcPC', 'Présent continu : 50 phrases', 'Actions en cours et situations temporaires.', pc),
+    T('pcPA', 'Past simple : 50 phrases', 'Verbes réguliers et irréguliers, négations et questions.', pa),
+    T('pcPCO', 'Past continuous : 50 phrases', 'Actions en cours dans le passé, actions interrompues.', pco),
+    T('pcPP', 'Present perfect simple : 50 phrases', 'Expérience, résultat, for et since, just / already / yet.', pp),
+    T('pcPPC', 'Present perfect continu : 50 phrases', 'Durée jusqu’à maintenant : for, since, lately, how long.', pcp),
+    T('pcFW', 'Futur avec will : 50 phrases', 'Décisions sur le moment, promesses, offres, prédictions.', fw),
+    T('pcFG', 'Futur : going to et present continuous : 50 phrases', 'Projets, intentions et rendez-vous arrangés.', fg)
+  );
+  const ids = ['pcPS','pcPC','pcPA','pcPCO','pcPP','pcPPC','pcFW','pcFG'];
+  const moved = ids.map(id => DECKS.splice(DECKS.findIndex(x => x.id === id), 1)[0]);
+  const at = DECKS.findIndex(x => x.id === 'tpsErr') + 1;
+  DECKS.splice(at, 0, ...moved);
+})();
+
 
 const $ = s => document.querySelector(s);
 function h(tag, props, ...kids){
@@ -1132,7 +1588,7 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
-const APP_VERSION='46fd2e34', APP_DATE='30/10/2026';
+const APP_VERSION='9051bef8', APP_DATE='30/10/2026';
 (function(){
   const b = document.getElementById('ver'); if (!b) return;
   const label = (x) => { b.textContent = x; };
