@@ -140,13 +140,16 @@ td:first-child{font-weight:600;white-space:nowrap}
 .hist .p{font:600 .95rem var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:16px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ver{font:500 .7rem var(--font-mono);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 10px;min-height:32px;cursor:pointer}
+.ver.ok{color:var(--ok);border-color:var(--ok)}
 </style>
 
 </head>
 <body>
 <main>
   <header>
-    <div class="eyebrow">Révision · 4 fiches</div>
+    <div class="topline"><div class="eyebrow">Révision · 4 fiches</div><button type="button" class="ver" id="ver" aria-live="polite"></button></div>
     <h1>Exercices d'anglais</h1>
     <p class="lead">Vocabulaire de tes fiches TEDx, thèse et 1000 mots, exercices sur les temps et les verbes, et suivi de tes progrès. Les questions déjà vues reviennent en dernier, tes erreurs reviennent en premier.</p>
   </header>
@@ -1129,6 +1132,24 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
+const APP_VERSION='46fd2e34', APP_DATE='30/10/2026';
+(function(){
+  const b = document.getElementById('ver'); if (!b) return;
+  const label = (x) => { b.textContent = x; };
+  label('\u21BB v' + APP_DATE);
+  b.setAttribute('aria-label', 'Vérifier la mise à jour. Version du ' + APP_DATE);
+  b.onclick = async () => {
+    label('Vérification…'); b.classList.remove('ok');
+    try {
+      const r = await fetch('version.json?t=' + Date.now(), {cache:'no-store'}); const j = await r.json();
+      if (j.v === APP_VERSION) { label('\u2713 À jour · ' + APP_DATE); b.classList.add('ok'); return; }
+      label('Mise à jour…');
+      const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
+      if (reg) { navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), {once:true}); await reg.update(); }
+      setTimeout(() => location.reload(), 4000);
+    } catch(e) { label('Hors ligne · ' + APP_DATE); }
+  };
+})();
 renderNav(); renderHome(); show('home'); setSync('local'); initCloud();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
