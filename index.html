@@ -1098,7 +1098,8 @@ We ___ (not do) anything special this weekend. ~ not do ~ aren't going to do|are
     T('pcFW', 'Futur avec will : 50 phrases', 'Décisions sur le moment, promesses, offres, prédictions.', fw),
     T('pcFG', 'Futur : going to et present continuous : 50 phrases', 'Projets, intentions et rendez-vous arrangés.', fg)
   );
-  const ids = ['pcPS','pcPC','pcPA','pcPCO','pcPP','pcPPC','pcFW','pcFG'];
+  DECKS.push({ id:'pcMix', mix:true, noAll:true, section:'tv', group:'Phrases à compléter', tag:'Mélange', title:'Tous les temps : au hasard', desc:'10 ou 20 phrases tirées au hasard dans les 8 exercices : à toi de reconnaître le bon temps.', kind:'conj', items: DECKS.filter(d => /^pc[A-Z]/.test(d.id) && !d.mix).flatMap(d => d.items) });
+  const ids = ['pcMix','pcPS','pcPC','pcPA','pcPCO','pcPP','pcPPC','pcFW','pcFG'];
   const moved = ids.map(id => DECKS.splice(DECKS.findIndex(x => x.id === id), 1)[0]);
   const at = DECKS.findIndex(x => x.id === 'tpsErr') + 1;
   DECKS.splice(at, 0, ...moved);
@@ -1333,7 +1334,8 @@ function renderConfig(){
     configEl.append(h('div', null, h('h4', null, 'Type d\'exercice'),
       h('div', {class:'chips'}, MODES.map(([k,l]) => h('button', {class:'chip', 'aria-pressed': state.mode===k, onclick(){ state.mode=k; renderConfig(); }}, l)))));
   }
-  const counts = [[10,'10 questions'],[20,'20 questions'],[0,'Tout (' + d.items.length + ')']];
+  const counts = d.noAll ? [[10,'10 questions'],[20,'20 questions']] : [[10,'10 questions'],[20,'20 questions'],[0,'Tout (' + d.items.length + ')']];
+  if (d.noAll && !state.count) state.count = 10;
   configEl.append(h('div', null, h('h4', null, 'Longueur'),
     h('div', {class:'chips'}, counts.map(([k,l]) => h('button', {class:'chip', 'aria-pressed': state.count===k, onclick(){ state.count=k; renderConfig(); }}, l)))));
   const last = lastSession(d.id), tries = prog.sessions.filter(s => s.d === d.id).length;
@@ -1404,14 +1406,14 @@ function describe(d, it){
 }
 function wrongPool(){
   const pool = [];
-  DECKS.forEach(d => { const m = prog.items[d.id] || {}; d.items.forEach(it => { const r = m[itemKey(it)]; if (r && r[1]) pool.push([d, it]); }); });
+  DECKS.filter(d => !d.mix).forEach(d => { const m = prog.items[d.id] || {}; d.items.forEach(it => { const r = m[itemKey(it)]; if (r && r[1]) pool.push([d, it]); }); });
   return pool;
 }
 function fmtDate(t){ const x = new Date(t); return x.toLocaleDateString('fr-FR', {day:'numeric', month:'short'}) + ' ' + x.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); }
 function renderStats(){
   const box = $('#stats'); box.replaceChildren();
   const S = prog.sessions, N = S.reduce((a,s) => a + s.n, 0), C = S.reduce((a,s) => a + s.s, 0);
-  let mast = 0, total = 0; DECKS.forEach(d => { const st = deckStats(d); mast += st.mastered; total += d.items.length; });
+  let mast = 0, total = 0; DECKS.filter(d => !d.mix).forEach(d => { const st = deckStats(d); mast += st.mastered; total += d.items.length; });
   box.append(h('div', {class:'tiles'},
     tile(String(S.length), 'Tentatives'), tile(String(N), 'Questions'),
     tile(N ? Math.round(C/N*100) + ' %' : '—', 'Réussite'), tile(mast + ' / ' + total, 'Maîtrisés')));
@@ -1442,7 +1444,7 @@ function renderStats(){
   box.append(rev);
   const sec = h('div', {class:'sec'}, h('h2', null, 'Progression par série'));
   [['vocab','Vocabulaire'],['tv','Temps et verbes']].forEach(([k,l]) => {
-    DECKS.filter(d => (d.section || 'vocab') === k).forEach(d => {
+    DECKS.filter(d => !d.mix && (d.section || 'vocab') === k).forEach(d => {
       const st = deckStats(d);
       sec.append(h('div', {class:'dk'},
         h('div', {class:'t'}, h('span', null, d.title), h('span', null, st.mastered + ' / ' + d.items.length + ' maîtrisés')),
@@ -1588,7 +1590,7 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
-const APP_VERSION='9051bef8', APP_DATE='30/10/2026';
+const APP_VERSION='11337578', APP_DATE='31/10/2026';
 (function(){
   const b = document.getElementById('ver'); if (!b) return;
   const label = (x) => { b.textContent = x; };
