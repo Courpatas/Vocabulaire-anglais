@@ -107,7 +107,7 @@ td:first-child{font-weight:600;white-space:nowrap}
 .fb.bad{background:var(--bad-soft);border-left:4px solid var(--bad)}
 .fb b{font-weight:600}
 .fb div{margin-top:4px}
-.fb .ex{color:var(--muted);font-size:.9rem}
+.fb .ex{color:var(--muted);font-size:.95rem;white-space:pre-line;line-height:1.55}
 .score{font:700 clamp(2.6rem,12vw,4rem)/1 var(--font-display)}
 .score small{font-size:.4em;color:var(--muted);font-weight:500}
 .miss{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
@@ -1105,6 +1105,88 @@ We ___ (not do) anything special this weekend. ~ not do ~ aren't going to do|are
   DECKS.splice(at, 0, ...moved);
 })();
 
+/* Phrases d'exemple pour les verbes irréguliers : présent / past simple / present perfect */
+(function(){
+  const EX = `
+to be ~ I am a student. ~ She was late and they were at home. ~ I have been here since nine.
+to have ~ I have a bike. ~ She had a cold last week. ~ We have had this car for years.
+to do ~ I do my homework every evening. ~ He did the dishes after dinner. ~ She has done all her work.
+to go ~ We go to the beach on Sundays. ~ Yesterday I went to the market. ~ He has just gone out. (gone = parti, been = allé et revenu : She has been to Japan twice.)
+to get ~ I get up at six. ~ She got a new job in May. ~ She has got a new phone. (US : gotten)
+to make ~ I make coffee every morning. ~ He made a cake yesterday. ~ We have made a decision.
+to take ~ She takes the bus to work. ~ I took a photo of the lagoon. ~ He has taken my umbrella.
+to give ~ He gives me good advice. ~ She gave me a book for my birthday. ~ They have given us a lot of help.
+to say ~ She says hello to everyone. ~ He said nothing yesterday. ~ I have said it many times.
+to tell ~ He tells funny stories. ~ She told me the truth. ~ I have told you twice.
+to see ~ I see my parents on Sundays. ~ We saw a film last night. ~ I have seen this film twice.
+to know ~ I know the answer. ~ She knew him at school. ~ We have known each other for ten years.
+to think ~ I think it's a good idea. ~ He thought about it all night. ~ I have thought about it a lot.
+to find ~ I find this exercise easy. ~ She found a wallet in the street. ~ We have found a solution.
+to buy ~ I buy bread every day. ~ He bought a new phone last week. ~ She has bought a house.
+to bring ~ I bring my lunch to work. ~ She brought some cake to the party. ~ He has brought his laptop.
+to teach ~ She teaches English at a school. ~ He taught maths for ten years. ~ She has taught thousands of students.
+to catch ~ I catch the bus at eight. ~ He caught a big fish yesterday. ~ She has caught a cold.
+to feel ~ I feel tired today. ~ She felt sick last night. ~ I have felt better since Monday.
+to keep ~ I keep my keys in my bag. ~ He kept the receipt. ~ She has kept all his letters.
+to leave ~ The bus leaves at noon. ~ We left early yesterday. ~ He has left his phone at home.
+to lose ~ I often lose my keys. ~ She lost her wallet on Monday. ~ We have lost the match.
+to mean ~ That sign means "stop". ~ I meant to call you yesterday. ~ It has always meant a lot to me.
+to meet ~ I meet my friends every Friday. ~ We met in 2019. ~ She has met the president.
+to pay ~ I pay by card. ~ He paid the bill. ~ We have paid the rent.
+to read ~ I read the news every morning. ~ She read that book last summer (read se prononce « red »). ~ I have read three chapters today.
+to run ~ He runs five kilometres a day. ~ She ran a marathon last year. ~ The kids have run home.
+to sell ~ They sell fresh fish here. ~ He sold his car in June. ~ We have sold the house.
+to send ~ I send her a message every day. ~ She sent me an email yesterday. ~ I have sent the files.
+to sit ~ I sit near the window. ~ He sat on the beach all afternoon. ~ We have sat here for an hour.
+to sleep ~ I sleep eight hours a night. ~ The baby slept all night. ~ She has slept badly this week.
+to speak ~ She speaks three languages. ~ He spoke to the teacher yesterday. ~ I have spoken to her already.
+to spend ~ We spend the summer in Moorea. ~ She spent a week in Paris. ~ He has spent all his money.
+to stand ~ I stand in the queue every morning. ~ He stood at the door for an hour. ~ We have stood here since noon.
+to swim ~ I swim in the lagoon every morning. ~ She swam across the bay. ~ He has swum with dolphins.
+to understand ~ I understand the question. ~ She understood everything. ~ We have understood the rule.
+to wake up ~ I wake up at six. ~ He woke up late yesterday. ~ She has woken up early today.
+to wear ~ He wears a suit at work. ~ She wore a red dress at the party. ~ I have worn this coat for years.
+to win ~ Our team wins most matches. ~ She won the race last Sunday. ~ We have won three games this season.
+to write ~ I write in my diary every night. ~ He wrote a long email yesterday. ~ She has written two books.
+to begin ~ The class begins at nine. ~ The film began at eight. ~ The rain has begun.
+to break ~ Children often break things. ~ He broke his arm last year. ~ I have broken my glasses.
+to choose ~ I choose the blue one. ~ She chose a book for the trip. ~ They have chosen a new teacher.
+to draw ~ She draws cartoons. ~ He drew a map on the board. ~ I have drawn a picture for you.
+to drink ~ I drink tea in the morning. ~ She drank a glass of water. ~ We have drunk all the milk.
+to drive ~ He drives to work. ~ She drove us to the airport. ~ I have driven 500 km today.
+to eat ~ We eat dinner at seven. ~ They ate fish last night. ~ I have eaten too much.
+to fall ~ Leaves fall in autumn. ~ He fell off his bike. ~ Prices have fallen this year.
+to fly ~ Birds fly south in winter. ~ We flew to Paris last July. ~ She has flown many times.
+to forget ~ I always forget his name. ~ She forgot her password. ~ I have forgotten my umbrella.
+to grow ~ Tomatoes grow fast in summer. ~ The children grew a lot last year. ~ The town has grown quickly.
+to hear ~ I hear music from next door. ~ We heard a loud noise last night. ~ I have heard the news.
+to hide ~ Cats hide when it thunders. ~ He hid the gift in the cupboard. ~ She has hidden her phone.
+to hold ~ She holds my hand in crowds. ~ He held the door for me. ~ We have held three meetings this month.
+to hurt ~ My back hurts today. ~ He hurt his knee yesterday. ~ She has hurt her wrist.
+to lend ~ I lend books to my friends. ~ He lent me his bike. ~ She has lent me some money.
+to ride ~ I ride my bike to work. ~ She rode a horse last summer. ~ He has ridden a camel.
+to ring ~ The phone rings all the time. ~ The bell rang at noon. ~ She has rung me twice today.
+to rise ~ The sun rises in the east. ~ The temperature rose quickly. ~ Prices have risen again.
+to shake ~ The ground shakes during an earthquake. ~ He shook my hand. ~ The news has shaken everyone.
+to sing ~ She sings in a choir. ~ He sang a song for us. ~ I have sung that song many times.
+to steal ~ Thieves steal bikes here. ~ Someone stole my phone. ~ Someone has stolen my bike.
+to throw ~ He throws the ball very far. ~ She threw the ball to the dog. ~ I have thrown away the old papers.
+to build ~ They build houses by the sea. ~ My dad built this table. ~ We have built a new school.
+to cut ~ I cut the bread. ~ She cut her hair last week. ~ He has cut his finger.
+to dig ~ Dogs dig holes in the garden. ~ We dug a hole for the tree. ~ They have dug a deep well.
+to feed ~ I feed the cat twice a day. ~ She fed the birds this morning. ~ He has fed the dog already.
+to fight ~ The two brothers fight a lot. ~ They fought all night. ~ She has fought for her rights.
+to hang ~ I hang my coat by the door. ~ He hung the picture on the wall. ~ We have hung new curtains.
+to lead ~ She leads the team. ~ He led the group up the hill. ~ They have led the project for years.
+to tear ~ Paper tears easily. ~ She tore the letter in two. ~ I have torn my jacket.
+to bite ~ My dog never bites. ~ A mosquito bit me last night. ~ The snake has bitten him.
+`;
+  const map = {};
+  EX.trim().split('\n').forEach(l => { const [v, a, b, c] = l.split(' ~ '); map[v.trim()] = [a.trim(), b.trim(), c.trim()]; });
+  const deck = DECKS.find(d => d.id === 'verbes');
+  deck.items.forEach(it => { it[4] = map[it[0]]; });
+})();
+
 
 const $ = s => document.querySelector(s);
 function h(tag, props, ...kids){
@@ -1121,6 +1203,15 @@ function h(tag, props, ...kids){
 }
 const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 const norm = s => s.toLowerCase().replace(/[’‘]/g,"'").replace(/[.,;:!?"“”]/g,'').replace(/-/g,' ').replace(/\s+/g,' ').trim();
+const stripAcc = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function frVariants(fr){
+  const out = new Set();
+  fr.split(/\s*[,/]\s*/).forEach(p => {
+    const base = p.replace(/\s*\(.*?\)/g,'').trim(), full = p.replace(/[()]/g,'').trim();
+    [base, full].forEach(x => { const n = stripAcc(norm(x)); out.add(n); out.add(n.replace(/^(se|s') ?/,'')); });
+  });
+  return [...out].filter(Boolean);
+}
 function variants(en){
   const out = new Set();
   en.split(' / ').forEach(p => {
@@ -1286,9 +1377,12 @@ function questionsFor(deck, mode, items){
         answerText: right + (gl(right) ? ' — ' + gl(right) : ''),
         info: o => '« ' + o + ' »' + (gl(o) ? ' = ' + gl(o) : '') };
     } else if (deck.kind === 'verbs') {
-      q = { type:'type', tag:'Verbe irrégulier', prompt:it[0], sub:it[1],
-        fields:[{label:'Prétérit', answers:variants(it[2])},{label:'Participe passé', answers:variants(it[3])}],
-        explain: it[0]+' – '+it[2]+' – '+it[3]+'  ('+it[1]+')', answerText: it[2]+' · '+it[3],
+      const ex = it[4];
+      q = { type:'type', tag:'Verbe irrégulier', prompt:it[0], sub:'Écris le prétérit et le participe passé. La case de traduction est facultative : elle ne compte pas dans ton score.',
+        fields:[{label:'Prétérit', answers:variants(it[2])},{label:'Participe passé', answers:variants(it[3])},
+                {label:'Traduction en français (facultatif)', answers:frVariants(it[1]), free:true}],
+        explain: it[0]+' – '+it[2]+' – '+it[3]+'\nTraduction : '+it[1] + (ex ? '\nPrésent : '+ex[0]+'\nPast simple : '+ex[1]+'\nPresent perfect : '+ex[2] : ''),
+        answerText: it[2]+' · '+it[3],
         hint: it[2][0]+' … / '+it[3][0]+' …' };
     } else if (deck.kind === 'conj') {
       q = { type:'type', tag: deck.tag || 'Conjugaison', prompt:it[0], sub:it[1],
@@ -1542,11 +1636,16 @@ function showQ(){
       if (answered) return;
       let all = true;
       inputs.forEach((inp, i) => {
+        if (q.fields[i].free) {
+          inp.readOnly = true; inp.nextSibling && (inp.nextSibling.hidden = true);
+          if (inp.value.trim()) inp.classList.add(q.fields[i].answers.includes(stripAcc(norm(inp.value))) ? 'ok' : 'bad');
+          return;
+        }
         const ok = q.fields[i].answers.includes(norm(inp.value));
         inp.classList.add(ok ? 'ok' : 'bad'); inp.readOnly = true; inp.nextSibling && (inp.nextSibling.hidden = true); if (!ok) all = false;
       });
       checkBtn.hidden = true; hintBtn.hidden = true;
-      const typed = inputs.map(i => i.value).join(' · ');
+      const typed = inputs.filter((x, i) => !q.fields[i].free).map(i => i.value).join(' · ');
       finish(all, typed, (!all && q.info && inputs[0].value.trim()) ? (q.fields.length === 1 ? q.info(inputs[0].value) : typed) : (!all && inputs[0].value.trim() ? '« ' + typed + ' »' : null));
     }
     card.append(fields, hint, fb, h('div', {class:'row'}, checkBtn, hintBtn, nextBtn));
@@ -1590,7 +1689,7 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
-const APP_VERSION='11337578', APP_DATE='31/10/2026';
+const APP_VERSION='4e21f8a0', APP_DATE='31/10/2026';
 (function(){
   const b = document.getElementById('ver'); if (!b) return;
   const label = (x) => { b.textContent = x; };
