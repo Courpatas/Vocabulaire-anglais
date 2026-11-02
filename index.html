@@ -107,6 +107,13 @@ td:first-child{font-weight:600;white-space:nowrap}
 .fb.bad{background:var(--bad-soft);border-left:4px solid var(--bad)}
 .fb b{font-weight:600}
 .fb div{margin-top:4px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:8px;align-content:start}
+.mbtn{min-height:56px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:500 1rem var(--font-body);text-align:left;cursor:pointer;touch-action:manipulation}
+.mbtn.sel{border-color:var(--accent);background:var(--accent-soft)}
+.mbtn.ok{border-color:var(--ok);background:var(--ok-soft)}
+.mbtn.bad{border-color:var(--bad);background:var(--bad-soft)}
+.mbtn:disabled{cursor:default;color:var(--fg)}
 .fb .ex{color:var(--muted);font-size:.95rem;white-space:pre-line;line-height:1.55}
 .score{font:700 clamp(2.6rem,12vw,4rem)/1 var(--font-display)}
 .score small{font-size:.4em;color:var(--muted);font-weight:500}
@@ -1187,6 +1194,197 @@ to bite ~ My dog never bites. ~ A mosquito bit me last night. ~ The snake has bi
   deck.items.forEach(it => { it[4] = map[it[0]]; });
 })();
 
+/* Mots de liaison : niveau avancé (5 exercices) */
+var EXTRA_GLOSS = {'even though':'bien que (insistant)','in spite of':'en dépit de','nevertheless':'néanmoins','if':'si','such':'tel (such a…)','too':'trop','very':'très','then':'puis, ensuite','until':'jusqu\'à ce que','as soon as':'dès que','instead of':'au lieu de','while':'tandis que','as well as':'ainsi que','provided that':'à condition que','hence':'d\'où','indeed':'en effet','in fact':'en fait','in short':'en bref','as':'comme (cause)'};
+(function(){
+  const ML = 'Mots de liaison : niveau avancé';
+
+  /* ---------- 1. Mots à relier ---------- */
+  const PAIRS = `although ~ bien que
+despite ~ malgré
+in spite of ~ en dépit de
+however ~ cependant
+nevertheless ~ néanmoins
+whereas ~ alors que
+on the other hand ~ en revanche
+because ~ parce que
+because of ~ à cause de
+due to ~ en raison de
+thanks to ~ grâce à
+since ~ puisque
+as ~ comme (cause)
+so ~ donc
+therefore ~ par conséquent
+hence ~ d'où
+unless ~ à moins que
+otherwise ~ sinon
+as long as ~ du moment que
+provided that ~ à condition que
+even if ~ même si
+in case ~ au cas où
+whether ~ si (choix entre deux possibilités)
+so that ~ pour que
+in order to ~ afin de
+instead of ~ au lieu de
+instead ~ à la place
+moreover ~ de plus
+besides ~ d'ailleurs
+in fact ~ en fait
+indeed ~ en effet
+for example ~ par exemple
+in particular ~ en particulier
+especially ~ surtout
+overall ~ dans l'ensemble
+in short ~ en bref
+in conclusion ~ pour conclure
+first of all ~ tout d'abord
+next ~ ensuite
+finally ~ enfin
+meanwhile ~ pendant ce temps
+until ~ jusqu'à ce que
+as soon as ~ dès que
+rather than ~ plutôt que
+as well as ~ ainsi que
+apart from ~ à part
+except ~ sauf
+according to ~ selon
+as for ~ quant à
+anyway ~ de toute façon
+at least ~ au moins
+not only … but also ~ non seulement… mais aussi
+either … or ~ soit… soit
+neither … nor ~ ni… ni
+such as ~ tel que`.split('\n').map(l => l.split(' ~ ').map(x => x.trim()));
+
+  /* ---------- 2. QCM difficile ---------- */
+  // [phrase, [options], index bonne réponse, explication, traduction de la phrase, (traductions des options)]
+  const Q = [
+['___ it was raining, we went out.',['Although','Despite','However','Whereas'],0,"although + sujet + verbe : une proposition complète suit.","Bien qu'il pleuve, nous sommes sortis."],
+['We went out ___ the rain.',['despite','although','however','whereas'],0,"despite + nom (ou verbe en -ing). Pas de sujet + verbe juste après.","Nous sommes sortis malgré la pluie."],
+['It was cold. ___, we went swimming.',['However','Although','Despite','Whereas'],0,"however s'emploie en début de phrase, suivi d'une virgule.","Il faisait froid. Pourtant, nous sommes allés nager."],
+['___ of the rain, we stayed outside.',['In spite','Despite','Although','However'],0,"in spite OF + nom, mais despite s'emploie sans of.","En dépit de la pluie, nous sommes restés dehors.",['en dépit (in spite of)','malgré (sans of)','bien que','cependant']],
+["She passed the exam ___ she hadn't studied much.",['even though','despite','in spite of','however'],0,"even though + proposition : bien que, alors que (fait réel, insistant).","Elle a réussi l'examen bien qu'elle n'ait pas beaucoup étudié."],
+['___ the fact that he was tired, he kept working.',['Despite','Although','However','Nevertheless'],0,"despite the fact that + proposition : seule construction possible avec despite devant un verbe conjugué.","Malgré le fait qu'il était fatigué, il a continué à travailler."],
+['He likes tea, ___ she prefers coffee.',['whereas','despite','however','in spite of'],0,"whereas relie deux propositions pour opposer deux sujets.","Il aime le thé, alors qu'elle préfère le café."],
+['The plan was risky. ___, it worked.',['Nevertheless','Although','Despite','Whereas'],0,"nevertheless : adverbe en début de phrase, suivi d'une virgule.","Le plan était risqué. Néanmoins, il a fonctionné."],
+['The match was cancelled ___ the rain.',['because of','because','although','so that'],0,"because of + nom.","Le match a été annulé à cause de la pluie."],
+['The match was cancelled ___ it rained.',['because','because of','due to','thanks to'],0,"because + proposition (sujet + verbe).","Le match a été annulé parce qu'il a plu."],
+['___ your help, we finished early.',['Thanks to','Because','Although','Despite'],0,"thanks to + nom : cause positive (grâce à).","Grâce à votre aide, nous avons fini tôt."],
+['It was late, ___ we took a taxi.',['so','because','although','whereas'],0,"so = donc : il introduit la conséquence.","Il était tard, donc nous avons pris un taxi."],
+['He was ___ tired that he fell asleep.',['so','such','too','very'],0,"so + adjectif + that. such + (a) + nom + that.","Il était si fatigué qu'il s'est endormi.",['si (so … that)','tel (such a … that)','trop (too … to)','très (very)']],
+['It was ___ a long day that I went to bed early.',['such','so','too','very'],0,"such a + adjectif + nom + that.","C'était une journée si longue que je me suis couché tôt.",['tel (such a … that)','si (so + adjectif)','trop','très']],
+['The train was late; ___, we missed the meeting.',['therefore','because','although','whereas'],0,"therefore : par conséquent, introduit une conséquence (souvent suivi d'une virgule).","Le train était en retard ; par conséquent, nous avons manqué la réunion."],
+['He left early ___ he could catch the train.',['so that','in order to','because of','despite'],0,"so that + proposition (sujet + verbe ou modal).","Il est parti tôt pour pouvoir prendre le train."],
+['He left early ___ catch the train.',['in order to','so that','because','although'],0,"in order to + verbe à l'infinitif (même sujet).","Il est parti tôt afin de prendre le train."],
+["I won't go ___ you come with me.",['unless','if','although','otherwise'],0,"unless = if … not. On n'ajoute pas de négation après unless.","Je n'irai pas à moins que tu viennes avec moi."],
+['Take an umbrella ___ it rains.',['in case','unless','as soon as','whereas'],0,"in case + présent : au cas où (précaution).","Prends un parapluie au cas où il pleuvrait."],
+['You can borrow my car ___ you drive carefully.',['as long as','unless','despite','in case'],0,"as long as = du moment que, à condition que.","Tu peux emprunter ma voiture du moment que tu conduis prudemment."],
+["Hurry up, ___ we'll miss the bus.",['otherwise','unless','although','therefore'],0,"otherwise = sinon (dans le cas contraire).","Dépêche-toi, sinon nous allons rater le bus."],
+["___ it rains tomorrow, we'll stay at home.",['If','Unless','In case','As long as'],0,"if + présent (jamais will) pour une condition.","S'il pleut demain, nous resterons à la maison."],
+["I'll go to the beach ___ it rains. (même s'il pleut)",['even if','unless','in case','whereas'],0,"even if + proposition : même si (hypothèse).","J'irai à la plage même s'il pleut."],
+['He is smart. ___, he is very kind.',['Moreover','Therefore','However','Otherwise'],0,"moreover = de plus : il ajoute un argument.","Il est intelligent. De plus, il est très gentil."],
+['First, mix the eggs. ___, add the flour.',['Then','Despite','Whereas','Unless'],0,"then / next = ensuite : marque l'ordre des actions.","D'abord, mélange les œufs. Ensuite, ajoute la farine."],
+['We waited ___ the bus arrived.',['until','unless','whereas','despite'],0,"until = jusqu'à ce que (ou jusqu'à).","Nous avons attendu jusqu'à l'arrivée du bus."],
+['Call me ___ you arrive.',['as soon as','whereas','despite','unless'],0,"as soon as + présent (pas will) : dès que.","Appelle-moi dès que tu arrives."],
+["I don't know ___ he will come or not.",['whether','unless','although','whereas'],0,"whether = si (choix entre deux possibilités), souvent avec or not.","Je ne sais pas s'il viendra ou non."],
+['We stayed at home ___ going out.',['instead of','despite','because of','unless'],0,"instead of + nom ou verbe en -ing : au lieu de.","Nous sommes restés à la maison au lieu de sortir."],
+['She is happy ___ she lost the game.',['although','because','so','unless'],0,"although + proposition : bien que (opposition).","Elle est heureuse bien qu'elle ait perdu le match."]
+  ].map(a => ({p:a[0], o:a[1], a:a[2], e:a[3], tr:a[4], t:a[5]}));
+
+  /* ---------- 3. Écrire le mot de liaison ---------- */
+  // [phrase, commence par, [réponses], explication, traduction]
+  const C = [
+['___ it was raining, we went out.','a','bien que',['although','though','even though'],"although + sujet + verbe.","Bien qu'il pleuve, nous sommes sortis."],
+['We went out ___ the rain.','d','malgré',['despite','in spite of'],"despite / in spite of + nom.","Nous sommes sortis malgré la pluie."],
+['It was cold. ___, we went swimming.','h','cependant',['however','nevertheless','nonetheless'],"however en début de phrase, + virgule.","Il faisait froid. Pourtant, nous sommes allés nager."],
+['The match was cancelled ___ the rain.','b','à cause de',['because of','due to','owing to'],"because of / due to + nom.","Le match a été annulé à cause de la pluie."],
+['The match was cancelled ___ it was raining.','b','parce que',['because','since','as'],"because + sujet + verbe.","Le match a été annulé parce qu'il pleuvait."],
+['___ your help, I finished early.','t','grâce à',['thanks to'],"thanks to + nom : cause positive.","Grâce à ton aide, j'ai fini tôt."],
+["I won't go ___ you come with me.",'u','à moins que',['unless'],"unless = if … not.","Je n'irai pas à moins que tu viennes avec moi."],
+["Hurry up, ___ we'll miss the bus.",'o','sinon',['otherwise','or else'],"otherwise = sinon.","Dépêche-toi, sinon nous allons rater le bus."],
+['He likes tea, ___ she prefers coffee.','w','alors que',['whereas','while'],"whereas / while : opposition entre deux sujets.","Il aime le thé, alors qu'elle préfère le café."],
+['We stayed in ___ going out.','i','au lieu de',['instead of'],"instead of + nom ou verbe en -ing.","Nous sommes restés à l'intérieur au lieu de sortir."],
+['He left early ___ catch the train.','i','afin de',['in order to','so as to'],"in order to / so as to + infinitif.","Il est parti tôt afin de prendre le train."],
+['Speak slowly ___ everyone understands.','s','pour que',['so that','in order that'],"so that + proposition : but.","Parle lentement pour que tout le monde comprenne."],
+['Take a coat ___ it gets cold.','i','au cas où',['in case'],"in case + présent : précaution.","Prends un manteau au cas où il ferait froid."],
+['You can come ___ you stay quiet.','a','du moment que',['as long as','provided that','providing that','so long as'],"as long as = du moment que, à condition que.","Tu peux venir du moment que tu restes calme."],
+['He is smart. ___, he is kind.','m','de plus',['moreover','furthermore','besides','in addition'],"moreover / furthermore : ajoutent un argument.","Il est intelligent. De plus, il est gentil."],
+['It was late; ___, we took a taxi.','t','par conséquent',['therefore','consequently','as a result'],"therefore / consequently : conséquence.","Il était tard ; par conséquent, nous avons pris un taxi."],
+['First, mix the eggs. ___, add the flour.','n','ensuite',['next','then','after that'],"next / then : ordre des actions.","D'abord, mélange les œufs. Ensuite, ajoute la farine."],
+['Wait here ___ I come back.','u','jusqu\'à ce que',['until','till'],"until + présent (pas will).","Attends ici jusqu'à ce que je revienne."],
+['Call me ___ you arrive.','a','dès que',['as soon as','once'],"as soon as + présent.","Appelle-moi dès que tu arrives."],
+["I don't know ___ he will come.",'w','si',['whether','if'],"whether = si (choix entre deux possibilités).","Je ne sais pas s'il viendra."],
+['I love summer, ___ July.','e','surtout',['especially','particularly','in particular'],"especially = surtout.","J'adore l'été, surtout juillet."],
+['___, the trip was a success.','o','dans l\'ensemble',['overall','on the whole','all in all'],"overall = dans l'ensemble.","Dans l'ensemble, le voyage a été une réussite."],
+['He was ___ tired that he fell asleep.','s','si… que',['so'],"so + adjectif + that.","Il était si fatigué qu'il s'est endormi."],
+['It was ___ a long day that I went to bed early.','s','tel… que',['such'],"such a + adjectif + nom + that.","C'était une journée si longue que je me suis couché tôt."],
+['She plays tennis ___ golf.','a','ainsi que',['as well as'],"as well as = ainsi que, en plus de.","Elle joue au tennis ainsi qu'au golf."],
+['___ the fact that it was expensive, he bought it.','d','malgré',['despite','in spite of'],"despite / in spite of the fact that + proposition.","Malgré le fait que c'était cher, il l'a acheté."],
+['___ to the report, sales rose.','a','selon',['according'],"according to + nom : selon.","Selon le rapport, les ventes ont augmenté."],
+["He didn't come ___ he was ill.",'b','parce que',['because','as','since'],"because + sujet + verbe.","Il n'est pas venu parce qu'il était malade."],
+['___ I was tired, I went to bed.','a','comme (cause)',['as','since','because'],"as / since / because en début de phrase : cause.","Comme j'étais fatigué, je suis allé me coucher."],
+['I need a pen ___ write my name.','t','pour',['to','in order to','so as to'],"to / in order to + infinitif : but.","J'ai besoin d'un stylo pour écrire mon nom."]
+  ].map(a => [a[0], 'Commence par « ' + a[1] + ' » · sens : ' + a[2], a[3], a[4], a[5]]);
+
+  /* ---------- 4. Transformer la phrase ---------- */
+  const NEGS = [["won't","will not"],["don't","do not"],["doesn't","does not"],["didn't","did not"],["isn't","is not"],["aren't","are not"],["can't","cannot"],["i'll","i will"],["you'll","you will"],["he'll","he will"],["she'll","she will"],["it's","it is"],["he's","he is"],["she's","she is"],["we'll","we will"],["they'll","they will"]];
+  const forms = a => { const out = new Set([a]); NEGS.forEach(([c,f]) => [...out].forEach(x => { if (x.includes(c)) out.add(x.replace(c,f)); if (x.includes(f)) out.add(x.replace(f,c)); })); return [...out]; };
+  // [consigne, mot imposé, [réponses], explication, traduction]
+  const T = [
+['Although it was raining, we went out.','despite',['despite the rain, we went out','we went out despite the rain','despite the fact that it was raining, we went out','we went out despite the fact that it was raining'],"despite + nom (the rain), ou despite the fact that + proposition.","Bien qu'il pleuve, nous sommes sortis. → Malgré la pluie, nous sommes sortis."],
+['Despite the cold, he went swimming.','although',['although it was cold, he went swimming','he went swimming although it was cold','although it was cold he went swimming'],"although + sujet + verbe : il faut une proposition complète.","Malgré le froid, il est allé nager. → Bien qu'il fasse froid, il est allé nager."],
+['The match was cancelled because it rained.','because of',['the match was cancelled because of the rain','because of the rain, the match was cancelled'],"because of + nom (the rain).","Le match a été annulé parce qu'il a plu. → …à cause de la pluie."],
+['We stayed home because of the storm.','because',['we stayed home because there was a storm','because there was a storm, we stayed home','we stayed home because it was stormy','because it was stormy, we stayed home'],"because + sujet + verbe (there was a storm).","Nous sommes restés chez nous à cause de l'orage. → …parce qu'il y avait un orage."],
+['He is tired, but he keeps working.','although',['although he is tired, he keeps working','he keeps working although he is tired','although he is tired he keeps working'],"although remplace but : on n'utilise pas les deux.","Il est fatigué, mais il continue de travailler. → Bien qu'il soit fatigué, il continue de travailler."],
+["I'll stay unless you need me.",'if',["i will stay if you do not need me","if you do not need me, i will stay","i will stay if you don't need me","if you don't need me, i will stay"],"unless = if … not : avec if on ajoute la négation.","Je resterai à moins que tu aies besoin de moi. → Je resterai si tu n'as pas besoin de moi."],
+["Study, or you'll fail.",'unless',["unless you study, you will fail","you will fail unless you study","unless you study you will fail"],"unless + présent affirmatif (pas de négation).","Étudie, ou tu échoueras. → À moins que tu étudies, tu échoueras."],
+['He worked hard, so he passed.','because',['he passed because he worked hard','because he worked hard, he passed'],"because introduit la cause : l'ordre des idées s'inverse.","Il a travaillé dur, donc il a réussi. → Il a réussi parce qu'il a travaillé dur."],
+['It was very cold, so we stayed in.','so … that',['it was so cold that we stayed in','it was so cold that we stayed inside'],"so + adjectif + that + conséquence.","Il faisait très froid, donc nous sommes restés à l'intérieur. → Il faisait si froid que nous sommes restés à l'intérieur."],
+['He left early to catch the train.','so that',['he left early so that he could catch the train','he left early so that he would catch the train','he left early so that he can catch the train'],"so that + sujet + could / would : but exprimé par une proposition.","Il est parti tôt pour prendre le train. → …pour qu'il puisse prendre le train."],
+['Thanks to her help, we won.','because',['we won because she helped us','because she helped us, we won','we won because she helped','because she helped, we won'],"because + sujet + verbe (she helped us).","Grâce à son aide, nous avons gagné. → Nous avons gagné parce qu'elle nous a aidés."],
+['She is rich. Her brother is poor.','whereas',['she is rich whereas her brother is poor','whereas her brother is poor, she is rich','she is rich, whereas her brother is poor'],"whereas oppose deux propositions dans une seule phrase.","Elle est riche. Son frère est pauvre. → Elle est riche alors que son frère est pauvre."],
+["I'll take an umbrella because it might rain.",'in case',["i will take an umbrella in case it rains","i'll take an umbrella in case it rains","in case it rains, i will take an umbrella","in case it rains i'll take an umbrella"],"in case + présent : précaution (au cas où).","Je prendrai un parapluie parce qu'il pourrait pleuvoir. → …au cas où il pleuvrait."],
+["He didn't study. He failed.",'therefore',["he didn't study; therefore, he failed","he did not study therefore he failed","he did not study and therefore he failed","he didn't study and therefore he failed"],"therefore = par conséquent : il introduit la conséquence.","Il n'a pas étudié. Il a échoué. → Il n'a pas étudié ; par conséquent, il a échoué."],
+["Although it's expensive, it's worth it.",'however',["it's expensive. however, it's worth it","it is expensive. however, it is worth it","it's expensive; however, it's worth it","it is expensive; however, it is worth it"],"however remplace although et se place en début de la 2e phrase, + virgule.","Bien que ce soit cher, ça vaut le coup. → C'est cher. Cependant, ça vaut le coup."],
+['She stayed in bed. She did not go to work.','instead of',['she stayed in bed instead of going to work','instead of going to work, she stayed in bed'],"instead of + verbe en -ing.","Elle est restée au lit. Elle n'est pas allée travailler. → Elle est restée au lit au lieu d'aller travailler."],
+['Despite being tired, he kept working.','although',['although he was tired, he kept working','he kept working although he was tired','although he was tired he kept working'],"although + sujet + verbe (he was tired).","Malgré sa fatigue, il a continué à travailler. → Bien qu'il fût fatigué, il a continué à travailler."]
+  ].map(a => ['Réécris avec « ' + a[1] + ' » : ' + a[0], 'Écris la phrase complète. Majuscules et ponctuation sont ignorées. Plusieurs réponses sont possibles : si la tienne est juste mais refusée, compare avec la solution.', [...new Set(a[2].flatMap(forms))], a[3], a[4]]);
+
+  /* ---------- 5. Corriger l'erreur ---------- */
+  // [phrase fausse, [options], bonne, explication, [traductions des options]]
+  const E = [
+['Despite it was raining, we went out.',['Despite the rain, we went out.','Despite of the rain, we went out.','Although the rain, we went out.','In spite the rain, we went out.'],"despite + nom, sans of. Devant un verbe conjugué, on utilise although.",["Malgré la pluie, nous sommes sortis.","Malgré la pluie… (incorrect : despite s'emploie sans of)","Bien que la pluie… (incorrect : although exige un verbe)","En dépit la pluie… (incorrect : il faut in spite of)"]],
+['I stayed home because the rain.',['I stayed home because of the rain.','I stayed home because of it rained.','I stayed home because it rain.','I stayed home despite the rain.'],"because of + nom ; because + sujet + verbe. La dernière phrase a le sens contraire.",["Je suis resté chez moi à cause de la pluie.","Je suis resté chez moi à cause qu'il pleuvait (incorrect).","Je suis resté chez moi parce qu'il pleut (incorrect : verbe mal conjugué).","Je suis resté chez moi malgré la pluie (sens contraire)."]],
+['He is tired, however he keeps working.',['He is tired; however, he keeps working.','He is tired, but however he keeps working.','He is tired however, he keeps working.','He is tired although, he keeps working.'],"however relie deux phrases : point-virgule ou point avant, virgule après.",["Il est fatigué ; pourtant, il continue de travailler.","Il est fatigué, mais pourtant il continue (incorrect : but + however).","Il est fatigué pourtant, il continue (incorrect : ponctuation).","Il est fatigué bien que, il continue (incorrect)."]],
+['Although he was tired, but he kept working.',['Although he was tired, he kept working.','Although he was tired, however he kept working.','Although tired, but he kept working.','Despite he was tired, he kept working.'],"although et but ne s'emploient pas ensemble : un seul connecteur d'opposition.",["Bien qu'il fût fatigué, il a continué à travailler.","Bien qu'il fût fatigué, pourtant il a continué (incorrect : doublon).","Bien que fatigué, mais il a continué (incorrect : doublon).","Malgré il était fatigué… (incorrect : despite + nom)."]],
+['I will call you when I will arrive.',['I will call you when I arrive.',"I will call you when I'll arrive.",'I call you when I will arrive.','I will call you when I arrived.'],"Après when, on met le présent, jamais will, pour parler du futur.",["Je t'appellerai quand j'arriverai.","Je t'appellerai quand j'arriverai (incorrect : will après when).","Je t'appelle quand j'arriverai (incorrect : temps).","Je t'appellerai quand je suis arrivé (incorrect : passé)."]],
+["Unless you don't hurry, we'll be late.",["Unless you hurry, we'll be late.","Unless you don't hurry, we'll not be late.","If you hurry not, we'll be late.","Unless you won't hurry, we'll be late."],"unless contient déjà la négation (= if … not) : on n'en ajoute pas.",["À moins que tu te dépêches, nous serons en retard.","À moins que tu ne te dépêches pas… (incorrect : double négation).","Si tu te dépêches pas… (incorrect).","À moins que tu ne veuilles pas te dépêcher… (incorrect)."]],
+['She is so a good teacher.',['She is such a good teacher.','She is a so good teacher.','She is so good teacher.','She is too a good teacher.'],"such a + adjectif + nom. So s'emploie avec un adjectif seul : so good.",["C'est une si bonne enseignante.","C'est une si bonne enseignante (incorrect : place de so).","Elle est si bonne enseignante (incorrect).","Elle est trop une bonne enseignante (incorrect)."]],
+['He was such tired that he fell asleep.',['He was so tired that he fell asleep.','He was too tired that he fell asleep.','He was very tired that he fell asleep.','He was so tired than he fell asleep.'],"so + adjectif + that. such s'emploie avec un nom : such a long day.",["Il était si fatigué qu'il s'est endormi.","Il était trop fatigué que… (incorrect : too … to).","Il était très fatigué que… (incorrect).","Il était si fatigué que… (incorrect : than au lieu de that)."]],
+['I went to the shop for buy bread.',['I went to the shop to buy bread.','I went to the shop for buy bread.','I went to the shop so that buy bread.','I went to the shop in order buying bread.'],"But + verbe : to (ou in order to) + infinitif.",["Je suis allé au magasin pour acheter du pain.","…pour acheter du pain (incorrect : for + verbe).","…pour acheter du pain (incorrect : so that + verbe nu).","…afin d'acheter du pain (incorrect : in order + -ing)."]],
+['He left early so as he could catch the train.',['He left early so that he could catch the train.','He left early so as he could catch the train.','He left early so that to catch the train.','He left early in order he could catch the train.'],"so that + sujet + could ; so as + to + infinitif.",["Il est parti tôt pour pouvoir prendre le train.","…pour pouvoir prendre le train (incorrect : so as + sujet).","…pour prendre le train (incorrect : so that + to).","…afin qu'il puisse prendre le train (incorrect : in order + sujet)."]],
+['We stayed at home instead to go out.',['We stayed at home instead of going out.','We stayed at home instead going out.','We stayed at home instead of go out.','We stayed at home instead to going out.'],"instead of + verbe en -ing.",["Nous sommes restés à la maison au lieu de sortir.","…au lieu de sortir (incorrect : il manque of).","…au lieu de sortir (incorrect : go sans -ing).","…au lieu de sortir (incorrect : to going)."]],
+['Even he is rich, he is not happy.',['Even though he is rich, he is not happy.','Even tough he is rich, he is not happy.','Even thought he is rich, he is not happy.','Even if though he is rich, he is not happy.'],"even though (même si, bien que) : attention à though, tough (dur) et thought (pensée).",["Même s'il est riche, il n'est pas heureux.","…tough = dur (incorrect : mauvais mot).","…thought = pensée / pensé (incorrect : mauvais mot).","…if though (incorrect : forme inexistante)."]],
+["I didn't go out. Beside, I was tired.",["I didn't go out. Besides, I was tired.","I didn't go out. Beside of, I was tired.","I didn't go out. By side, I was tired.","I didn't go out. Besides that, was I tired."],"besides = d'ailleurs ; beside = à côté de.",["Je ne suis pas sorti. D'ailleurs, j'étais fatigué.","Je ne suis pas sorti. À côté de, j'étais fatigué (incorrect).","Je ne suis pas sorti. Par côté, j'étais fatigué (incorrect).","Je ne suis pas sorti. En plus de ça, étais-je fatigué (incorrect : inversion)."]],
+["I'll take a coat in case it will be cold.",["I'll take a coat in case it is cold.","I'll take a coat in case of it is cold.","I'll take a coat in case it will be cold.","I'll take a coat in case to be cold."],"in case + présent (pas will) : au cas où.",["Je prendrai un manteau au cas où il ferait froid.","…au cas où il fait froid (incorrect : in case of + verbe).","…au cas où il fera froid (incorrect : will après in case).","…au cas d'être froid (incorrect)."]],
+['Despite of being tired, he came.',['Despite being tired, he came.','Despite to be tired, he came.','Despite he was tired, he came.','Despite of he was tired, he came.'],"despite + verbe en -ing, sans of.",["Malgré sa fatigue, il est venu.","Malgré être fatigué… (incorrect : to be).","Malgré il était fatigué… (incorrect : despite + proposition).","Malgré de il était fatigué… (incorrect)."]],
+["As soon as he will arrive, we'll start.",["As soon as he arrives, we'll start.","As soon as he will arrive, we'll start.","As soon as he arrived, we'll start.","As soon as arrives, we'll start."],"as soon as + présent (pas will) pour le futur.",["Dès qu'il arrivera, nous commencerons.","Dès qu'il arrivera… (incorrect : will après as soon as).","Dès qu'il est arrivé, nous commencerons (incorrect : temps).","Dès qu'arrive… (incorrect : sujet manquant)."]]
+  ].map(a => ({p:a[0], o:a[1], a:0, e:a[2], t:a[3], s:'Cette phrase contient une erreur : choisis la bonne version.'}));
+
+  const base = { section:'vocab', group:ML, tag:'Mot de liaison' };
+  DECKS.push(
+    { ...base, id:'mlRelier', title:'Relier les mots de liaison', desc:'Associe chaque mot de liaison anglais à son sens en français, par séries de 6.', kind:'match', counts:[[12,'2 séries'],[24,'4 séries'],[36,'6 séries']], items:PAIRS },
+    { ...base, id:'mlQcm', title:'Choisir le bon connecteur (difficile)', desc:'Les choix ont tous le même sens : il faut connaître la construction.', kind:'qcm', items:Q },
+    { ...base, id:'mlCloze', title:'Écrire le mot de liaison', desc:'Complète la phrase sans aucun choix : seule la première lettre et le sens sont donnés.', kind:'conj', items:C },
+    { ...base, id:'mlTrans', title:'Transformer la phrase', desc:'Réécris la phrase avec le connecteur imposé : despite, although, unless…', kind:'conj', items:T },
+    { ...base, id:'mlErr', title:'Corriger l\'erreur', desc:'Une phrase contient une faute de construction : choisis la bonne version.', kind:'qcm', items:E }
+  );
+  // juste après la fiche « Mots de liaison » existante
+  const ids = ['mlRelier','mlQcm','mlCloze','mlTrans','mlErr'];
+  const moved = ids.map(id => DECKS.splice(DECKS.findIndex(x => x.id === id), 1)[0]);
+  DECKS.splice(DECKS.findIndex(x => x.id === 'connecteurs') + 1, 0, ...moved);
+})();
+
 
 const $ = s => document.querySelector(s);
 function h(tag, props, ...kids){
@@ -1366,14 +1564,28 @@ function makeVocabQ(deck, it, mode){
     hint: keyOf(it)[0] + ' … (' + keyOf(it).replace(/ /g,'').length + ' lettres)' };
 }
 const GLOSS = {'unless':'à moins que','because':'parce que','although':'bien que','so':'donc, alors','therefore':'par conséquent','whereas':'alors que','despite':'malgré','because of':'à cause de','so that':'pour que','in case':'au cas où','as long as':'du moment que','otherwise':'sinon','moreover':'de plus, en outre','instead':'à la place','meanwhile':'pendant ce temps','in order to':'afin de','besides':'d\'ailleurs, en outre','however':'cependant','overall':'dans l\'ensemble','due to':'en raison de','thanks to':'grâce à','nonetheless':'néanmoins','even if':'même si','whether':'si (choix entre deux possibilités)','next':'ensuite','especially':'surtout','since':'puisque','on condition that':'à la condition que','so as':'afin (de)','finally':'enfin','so … that':'si… que','such … that':'tel… que'};
+if (typeof EXTRA_GLOSS !== 'undefined') Object.assign(GLOSS, EXTRA_GLOSS);
+const GLOSS_TAGS = ['Connecteur', 'Mot de liaison'];
 function questionsFor(deck, mode, items){
+  if (deck.kind === 'match') {
+    const groups = [];
+    for (let i = 0; i < items.length; i += 6) groups.push(items.slice(i, i + 6));
+    if (groups.length > 1 && groups[groups.length-1].length < 3) groups[groups.length-2].push(...groups.pop());
+    return groups.map(g => ({ type:'match', tag: deck.tag || 'Mots à relier', prompt:'Relie chaque mot de liaison à son sens',
+      sub:'Touche un mot anglais, puis son équivalent en français. Un mot raté ne compte pas comme réussi.',
+      pairs:g, key:null, deckId:deck.id, answerText:'les associations ci-dessous',
+      explain: 'Sens de chaque proposition :\n' + g.map(p => '• ' + p[0] + ' = ' + p[1]).join('\n') }));
+  }
   return items.map(it => {
     let q;
     if (deck.kind === 'qcm') {
       const right = it.o[it.a], opts = shuffle(it.o);
-      const gl = deck.id === 'connecteurs' ? (o => GLOSS[o.toLowerCase()]) : (() => null);
-      q = { type:'choice', tag: deck.tag || 'Question', prompt:it.p, sub:'Choisis la bonne réponse.',
-        options: opts, correct: opts.indexOf(right), explain:it.e,
+      const glossOn = GLOSS_TAGS.includes(deck.tag);
+      const tl = it.t || it.o.map(o => GLOSS[o.toLowerCase()]);
+      const gl = glossOn ? (o => tl[it.o.indexOf(o)]) : (() => null);
+      const lines = !glossOn ? '' : '\nSens de chaque proposition :\n' + it.o.map((o, j) => (j === it.a ? '✓ ' : '✗ ') + o + (tl[j] ? (o.length + tl[j].length > 36 ? '\n→ ' : ' = ') + tl[j] : '')).join('\n');
+      q = { type:'choice', tag: deck.tag || 'Question', prompt:it.p, sub: it.s || 'Choisis la bonne réponse.',
+        options: opts, correct: opts.indexOf(right), explain: it.e + (it.tr ? '\nTraduction : ' + it.tr : '') + lines,
         answerText: right + (gl(right) ? ' — ' + gl(right) : ''),
         info: o => '« ' + o + ' »' + (gl(o) ? ' = ' + gl(o) : '') };
     } else if (deck.kind === 'verbs') {
@@ -1386,7 +1598,7 @@ function questionsFor(deck, mode, items){
         hint: it[2][0]+' … / '+it[3][0]+' …' };
     } else if (deck.kind === 'conj') {
       q = { type:'type', tag: deck.tag || 'Conjugaison', prompt:it[0], sub:it[1],
-        fields:[{label:'Ta réponse', answers: it[2].map(norm)}], explain: it[3], answerText: it[2][0],
+        fields:[{label:'Ta réponse', answers: it[2].map(norm)}], explain: it[3] + (it[4] ? '\nTraduction : ' + it[4] : ''), answerText: it[2][0],
         hint: it[2][0].split(' ')[0].slice(0,1) + ' … (' + it[2][0].split(' ').length + ' mot' + (it[2][0].split(' ').length > 1 ? 's' : '') + ')' };
     } else {
       let m = mode;
@@ -1428,8 +1640,8 @@ function renderConfig(){
     configEl.append(h('div', null, h('h4', null, 'Type d\'exercice'),
       h('div', {class:'chips'}, MODES.map(([k,l]) => h('button', {class:'chip', 'aria-pressed': state.mode===k, onclick(){ state.mode=k; renderConfig(); }}, l)))));
   }
-  const counts = d.noAll ? [[10,'10 questions'],[20,'20 questions']] : [[10,'10 questions'],[20,'20 questions'],[0,'Tout (' + d.items.length + ')']];
-  if (d.noAll && !state.count) state.count = 10;
+  const counts = d.counts || (d.noAll ? [[10,'10 questions'],[20,'20 questions']] : [[10,'10 questions'],[20,'20 questions'],[0,'Tout (' + d.items.length + ')']]);
+  if (!counts.some(c => c[0] === state.count)) state.count = counts[0][0];
   configEl.append(h('div', null, h('h4', null, 'Longueur'),
     h('div', {class:'chips'}, counts.map(([k,l]) => h('button', {class:'chip', 'aria-pressed': state.count===k, onclick(){ state.count=k; renderConfig(); }}, l)))));
   const last = lastSession(d.id), tries = prog.sessions.filter(s => s.d === d.id).length;
@@ -1475,7 +1687,7 @@ function renderHome(){
       const st = deckStats(d);
       const row = h('button', {class:'deck', 'aria-pressed':false, onclick(){ selectDeck(d, row); }},
         h('h3', null, d.title), h('p', null, d.desc),
-        h('div', {class:'meta'}, h('b', null, String(d.items.length)), d.kind==='vocab'?'mots':d.kind==='verbs'?'verbes':d.kind==='conj'?'phrases':'questions'),
+        h('div', {class:'meta'}, h('b', null, String(d.items.length)), d.kind==='vocab'?'mots':d.kind==='verbs'?'verbes':d.kind==='conj'?'phrases':d.kind==='match'?'paires':'questions'),
         h('div', {class:'mini'}, stackBar(st, d.items.length)));
       rowOf.set(d, row); box.append(row);
     });
@@ -1500,7 +1712,7 @@ function describe(d, it){
 }
 function wrongPool(){
   const pool = [];
-  DECKS.filter(d => !d.mix).forEach(d => { const m = prog.items[d.id] || {}; d.items.forEach(it => { const r = m[itemKey(it)]; if (r && r[1]) pool.push([d, it]); }); });
+  DECKS.filter(d => !d.mix && d.kind !== 'match').forEach(d => { const m = prog.items[d.id] || {}; d.items.forEach(it => { const r = m[itemKey(it)]; if (r && r[1]) pool.push([d, it]); }); });
   return pool;
 }
 function fmtDate(t){ const x = new Date(t); return x.toLocaleDateString('fr-FR', {day:'numeric', month:'short'}) + ' ' + x.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); }
@@ -1619,6 +1831,26 @@ function showQ(){
       opts.append(b);
     });
     card.append(opts, fb, h('div', {class:'row'}, nextBtn));
+  } else if (q.type === 'match') {
+    const n = q.pairs.length, err = new Set(), done = new Set(), L = [], R = [];
+    let selL = null, selR = null;
+    const colL = h('div', {class:'col'}), colR = h('div', {class:'col'});
+    q.pairs.forEach((p, i) => { const b = h('button', {class:'mbtn', type:'button', onclick(){ tap('L', i); }}, p[0]); L[i] = b; colL.append(b); });
+    shuffle(q.pairs.map((p, i) => i)).forEach(i => { const b = h('button', {class:'mbtn', type:'button', lang:'fr', onclick(){ tap('R', i); }}, q.pairs[i][1]); R[i] = b; colR.append(b); });
+    function tap(side, i){
+      if (answered || done.has(i)) return;
+      if (side === 'L') { if (selL !== null) L[selL].classList.remove('sel'); selL = selL === i ? null : i; if (selL !== null) L[selL].classList.add('sel'); }
+      else { if (selR !== null) R[selR].classList.remove('sel'); selR = selR === i ? null : i; if (selR !== null) R[selR].classList.add('sel'); }
+      if (selL === null || selR === null) return;
+      const a = selL, b = selR; L[a].classList.remove('sel'); R[b].classList.remove('sel'); selL = selR = null;
+      if (a === b) {
+        done.add(a); [L[a], R[a]].forEach(x => { x.classList.add('ok'); x.disabled = true; });
+        if (done.size === n) { q.pairs.forEach((p, k) => record(q.deckId, p[0], !err.has(k))); finish(err.size === 0, err.size ? err.size + ' mot' + (err.size > 1 ? 's' : '') + ' à revoir' : '', null); }
+      } else {
+        err.add(a); [L[a], R[b]].forEach(x => x.classList.add('bad')); setTimeout(() => [L[a], R[b]].forEach(x => x.classList.remove('bad')), 700);
+      }
+    }
+    card.append(h('div', {class:'match'}, colL, colR), fb, h('div', {class:'row'}, nextBtn));
   } else {
     const fields = h('div', {class:'fields'});
     const inputs = q.fields.map((f, i) => {
@@ -1689,7 +1921,7 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
-const APP_VERSION='4e21f8a0', APP_DATE='31/10/2026';
+const APP_VERSION='135f2e53', APP_DATE='02/11/2026';
 (function(){
   const b = document.getElementById('ver'); if (!b) return;
   const label = (x) => { b.textContent = x; };
