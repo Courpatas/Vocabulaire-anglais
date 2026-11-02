@@ -1385,6 +1385,238 @@ such as ~ tel que`.split('\n').map(l => l.split(' ~ ').map(x => x.trim()));
   DECKS.splice(DECKS.findIndex(x => x.id === 'connecteurs') + 1, 0, ...moved);
 })();
 
+/* +30 mots dans chaque fiche de vocabulaire. Ligne : anglais ~ français ~ phrase ~ clé (si la phrase contient une forme conjuguée) */
+(function(){
+  const add = (id, text) => {
+    const d = DECKS.find(x => x.id === id);
+    text.trim().split('\n').forEach(l => { const p = l.split(' ~ ').map(x => x.trim()); d.items.push(p.filter((x, i) => i < 3 || x)); });
+  };
+  add('tedx', `
+to thrive ~ s'épanouir, prospérer ~ Children thrive when they feel safe. ~ thrive
+resilience ~ résilience ~ Resilience is built through small failures.
+to embrace ~ adopter, accueillir ~ We should embrace change instead of fearing it. ~ embrace
+breakthrough ~ percée ~ The study led to a major breakthrough.
+to foster ~ favoriser, encourager ~ Good teachers foster curiosity. ~ foster
+mindset ~ état d'esprit ~ A growth mindset helps you learn from mistakes.
+to overcome ~ surmonter ~ It took years to overcome her fear of speaking. ~ overcome
+hardship ~ épreuve, difficulté ~ He grew up in hardship.
+to nurture ~ cultiver, nourrir (un talent) ~ Parents nurture their children's talents. ~ nurture
+outcome ~ résultat, issue ~ The outcome surprised the researchers.
+insight ~ aperçu, éclairage ~ The talk gave me a new insight into ageing.
+gap ~ écart, lacune ~ There is a gap between rich and poor.
+to spark ~ déclencher, susciter ~ A single question can spark a debate. ~ spark
+trade-off ~ compromis, arbitrage ~ Every choice involves a trade-off.
+pitfall ~ piège, écueil ~ One common pitfall is doing too much too soon.
+to cope with ~ faire face à ~ How do you cope with stress?
+wellbeing ~ bien-être ~ Sleep is essential to our wellbeing.
+loneliness ~ solitude (subie) ~ Loneliness affects physical health.
+peer pressure ~ pression des pairs ~ Teenagers often yield to peer pressure.
+to strive ~ s'efforcer de ~ We strive to improve every day. ~ strive
+drawback ~ inconvénient ~ The only drawback is the price.
+lifespan ~ durée de vie ~ Average lifespan has increased worldwide.
+to undermine ~ saper, fragiliser ~ Constant criticism can undermine confidence. ~ undermine
+shift ~ changement, virage ~ We are seeing a shift in how people work.
+to reinforce ~ renforcer ~ Practice helps to reinforce what you learn. ~ reinforce
+stigma ~ stigmatisation ~ There is still a stigma around mental health.
+awareness ~ sensibilisation, conscience ~ Awareness campaigns encourage physical activity.
+on the rise ~ en hausse ~ Obesity is on the rise among children.
+to take for granted ~ considérer comme acquis ~ Many people take for granted that they can walk.
+a wake-up call ~ un signal d'alarme ~ The diagnosis was a wake-up call.
+`);
+  add('these', `
+to operationalise ~ opérationnaliser ~ We needed to operationalise the concept with clear indicators. ~ operationalise
+positionality ~ positionnement du chercheur ~ I discuss my positionality as an insider researcher.
+insider researcher ~ chercheur en position d'insider ~ As an insider researcher, I know the context well.
+coding ~ codage (des données) ~ Coding was done in two stages.
+thematic analysis ~ analyse thématique ~ I used thematic analysis to interpret the interviews.
+sampling frame ~ base de sondage ~ The sampling frame included all secondary schools.
+response rate ~ taux de réponse ~ The response rate was 62 per cent.
+inclusion criteria ~ critères d'inclusion ~ Participants had to meet the inclusion criteria.
+to triangulate ~ trianguler ~ It is useful to triangulate several data sources. ~ triangulate
+bias ~ biais ~ Social desirability bias may affect self-reported data.
+validity ~ validité ~ Validity depends on the quality of the instrument.
+reliability ~ fiabilité ~ Reliability means obtaining consistent results.
+generalisability ~ généralisabilité, possibilité de généraliser ~ The small sample limits generalisability.
+limitation ~ limite (de l'étude) ~ A key limitation is the small sample.
+research question ~ question de recherche ~ The research question guides the whole design.
+hypothesis ~ hypothèse ~ The data did not support our hypothesis.
+conceptual framework ~ cadre conceptuel ~ The conceptual framework draws on three theories.
+empirical evidence ~ données empiriques ~ There is little empirical evidence on this point.
+mixed methods ~ méthodes mixtes ~ A mixed methods design combines surveys and interviews.
+case study ~ étude de cas ~ The case study focuses on one school.
+to disseminate ~ diffuser (des résultats) ~ We aim to disseminate the findings to teachers. ~ disseminate
+ethical approval ~ accord du comité d'éthique ~ Ethical approval was obtained before the fieldwork.
+anonymity ~ anonymat ~ Anonymity was guaranteed to all respondents.
+gatekeeper ~ personne-clé qui donne accès au terrain ~ The head teacher acted as gatekeeper.
+pilot study ~ étude pilote ~ A pilot study tested the questionnaire.
+to interpret ~ interpréter ~ It is hard to interpret these results. ~ interpret
+evidence-based ~ fondé sur des données probantes ~ Evidence-based policy requires reliable data.
+policy coherence ~ cohérence des politiques publiques ~ Policy coherence between health and education is weak.
+top-down ~ descendant ~ A top-down approach ignores local realities.
+bottom-up ~ ascendant ~ A bottom-up approach starts from teachers' needs.
+`);
+  add('sport', `
+dumbbell ~ haltère ~ He lifted a heavy dumbbell.
+treadmill ~ tapis de course ~ I run on the treadmill when it rains.
+sunscreen ~ crème solaire ~ Wear sunscreen during long rides.
+helmet ~ casque ~ Always wear a helmet when cycling.
+saddle ~ selle ~ My saddle is too low.
+handlebars ~ guidon ~ Keep your hands on the handlebars.
+to dive ~ plonger ~ We dive in the lagoon every weekend. ~ dive
+to paddle ~ pagayer ~ We paddle out at sunrise. ~ paddle
+wave ~ vague ~ The waves were huge today. ~ waves
+swell ~ houle ~ A big swell is coming from the south.
+current ~ courant ~ The current was strong near the reef.
+tide ~ marée ~ The tide is going out.
+sail ~ voile ~ We raised the sail.
+to capsize ~ chavirer ~ The canoe capsized in the rough sea. ~ capsized
+to dribble ~ dribbler ~ He dribbled past two defenders. ~ dribbled
+goalkeeper ~ gardien de but ~ The goalkeeper saved the penalty.
+to score ~ marquer ~ She scored in the last minute. ~ scored
+penalty ~ penalty ~ The referee awarded a penalty.
+team-mate ~ coéquipier ~ My team-mate passed me the ball.
+coach ~ entraîneur ~ Our coach changed the training plan.
+tournament ~ tournoi ~ We reached the tournament final.
+to qualify ~ se qualifier ~ She qualified for the final. ~ qualified
+personal best ~ record personnel ~ I ran a personal best yesterday.
+interval training ~ fractionné ~ Interval training improves speed.
+recovery ~ récupération ~ Recovery is as important as training.
+muscle soreness ~ courbatures ~ I have muscle soreness after the long run.
+hydration ~ hydratation ~ Hydration matters on hot days.
+to overtrain ~ s'entraîner de façon excessive ~ Athletes who overtrain risk injury. ~ overtrain
+to taper ~ réduire la charge avant une course ~ Triathletes taper before a race. ~ taper
+transition ~ transition (triathlon) ~ A fast transition can save you a minute.
+`);
+  add('voyage', `
+passport ~ passeport ~ Don't forget your passport.
+visa ~ visa ~ Do you need a visa for this country?
+departure ~ départ ~ Departure is at nine o'clock.
+arrival ~ arrivée ~ Our arrival time is 6 p.m.
+baggage claim ~ retrait des bagages ~ Meet me at the baggage claim.
+security check ~ contrôle de sécurité ~ The security check was very quick.
+duty-free ~ hors taxes ~ I bought perfume in the duty-free shop.
+stopover ~ escale ~ We had a two-hour stopover in Auckland.
+direct flight ~ vol direct ~ There is no direct flight to Rarotonga from here.
+to check in ~ s'enregistrer ~ You can check in online. ~ check in
+to cancel ~ annuler ~ They had to cancel the flight. ~ cancel
+reservation ~ réservation ~ I have a reservation for two nights.
+single room ~ chambre simple ~ A single room costs less.
+double room ~ chambre double ~ We booked a double room with a sea view.
+reception ~ accueil, réception ~ Ask at reception for a map.
+deposit ~ acompte, caution ~ You must pay a deposit to book.
+tourist attraction ~ site touristique ~ The waterfall is the main tourist attraction.
+guided tour ~ visite guidée ~ We took a guided tour of the old town.
+souvenir ~ souvenir (objet) ~ I bought a souvenir for my mother.
+landmark ~ site emblématique ~ The tower is a famous landmark.
+to get lost ~ se perdre ~ We got lost in the old town. ~ got lost
+ferry ~ ferry ~ The ferry leaves at noon.
+harbour ~ port ~ Boats were moored in the harbour.
+cruise ~ croisière ~ They went on a cruise around the islands.
+to sunbathe ~ bronzer, prendre un bain de soleil ~ I love to sunbathe on the beach. ~ sunbathe
+travel insurance ~ assurance voyage ~ Always take out travel insurance.
+currency ~ devise, monnaie ~ What is the local currency?
+to pack ~ faire ses valises ~ I need to pack tonight. ~ pack
+to unpack ~ défaire ses valises ~ We unpacked as soon as we arrived. ~ unpacked
+overbooked ~ en surréservation ~ The flight was overbooked.
+`);
+  add('corps', `
+chin ~ menton ~ He has a small scar on his chin.
+forehead ~ front ~ She wiped the sweat from her forehead.
+eyebrow ~ sourcil ~ He raised an eyebrow.
+jaw ~ mâchoire ~ My jaw hurts when I chew.
+throat ~ gorge ~ I have a pain in my throat.
+spine ~ colonne vertébrale ~ Keep your spine straight.
+rib ~ côte (os) ~ He broke a rib in the match.
+muscle ~ muscle ~ Squats work the big leg muscles. ~ muscles
+joint ~ articulation ~ Her joints feel stiff in the morning. ~ joints
+heel ~ talon ~ I have a blister on my heel.
+calf ~ mollet ~ I have a cramp in my calf.
+thigh ~ cuisse ~ He pulled a muscle in his thigh.
+stomach ~ estomac, ventre ~ My stomach hurts.
+heart ~ cœur ~ Exercise is good for your heart.
+brain ~ cerveau ~ The brain needs sleep to recover.
+blood ~ sang ~ The nurse took a blood sample. ~ blood
+nerve ~ nerf ~ A trapped nerve can be very painful.
+dizzy ~ pris de vertiges ~ I felt dizzy after standing up too fast.
+nausea ~ nausée ~ The boat ride gave me nausea.
+sore throat ~ mal de gorge ~ I woke up with a sore throat.
+bruise ~ bleu, ecchymose ~ She has a bruise on her arm.
+rash ~ éruption cutanée ~ The cream cleared the rash.
+swelling ~ gonflement ~ There was some swelling around the ankle.
+blister ~ ampoule ~ New shoes gave me a blister.
+stiff ~ raide, courbaturé ~ My neck is stiff this morning.
+to faint ~ s'évanouir ~ He nearly fainted in the heat. ~ fainted
+to vomit ~ vomir ~ The child vomited twice during the night. ~ vomited
+to limp ~ boiter ~ He limped off the pitch. ~ limped
+to swallow ~ avaler ~ It hurts to swallow. ~ swallow
+to breathe ~ respirer ~ Breathe in slowly through your nose. ~ Breathe
+`);
+  add('quotidien', `
+fridge ~ réfrigérateur ~ There is no milk in the fridge.
+kettle ~ bouilloire ~ Put the kettle on, please.
+mop ~ serpillière, balai à franges ~ I cleaned the floor with a mop.
+vacuum cleaner ~ aspirateur ~ The vacuum cleaner is in the cupboard.
+to tidy up ~ ranger ~ Please tidy up your room. ~ tidy up
+doorbell ~ sonnette ~ The doorbell rang twice.
+anxious ~ anxieux ~ I always feel anxious before an exam.
+cheerful ~ jovial, enjoué ~ She is a cheerful person.
+upset ~ contrarié, bouleversé ~ He was upset about the news.
+disappointed ~ déçu ~ We were disappointed with the result.
+ashamed ~ honteux ~ She felt ashamed of her mistake.
+moody ~ lunatique, d'humeur changeante ~ Teenagers can be very moody.
+honest ~ honnête ~ Be honest with me.
+reliable ~ fiable ~ He is a reliable colleague.
+clumsy ~ maladroit ~ I'm so clumsy: I dropped my phone.
+greedy ~ gourmand, avide ~ Don't be greedy: share the cake.
+polite ~ poli ~ It is polite to say thank you.
+rude ~ impoli, grossier ~ It was rude to interrupt her.
+screenshot ~ capture d'écran ~ I took a screenshot of the message.
+to scroll ~ faire défiler ~ He scrolls through his phone every evening. ~ scrolls
+to delete ~ supprimer ~ Delete the old files to free some space. ~ Delete
+to back up ~ sauvegarder ~ Remember to back up your files. ~ back up
+notification ~ notification ~ I turned off all notifications at night. ~ notifications
+to update ~ mettre à jour ~ The app needs to update. ~ update
+attachment ~ pièce jointe ~ I sent the report as an attachment.
+to sign up ~ s'inscrire ~ You need to sign up to access the course. ~ sign up
+colleague ~ collègue ~ My colleague is on leave this week.
+meeting ~ réunion ~ The meeting starts at ten.
+workload ~ charge de travail ~ Her workload doubled this year.
+to schedule ~ planifier ~ Let's schedule a call for Monday. ~ schedule
+`);
+  add('expr', `
+to bite the bullet ~ serrer les dents, se résoudre à faire qqch de pénible ~ I decided to bite the bullet and call the dentist.
+to break the ice ~ briser la glace ~ A joke can break the ice.
+to spill the beans ~ vendre la mèche ~ Don't spill the beans about the surprise party.
+the ball is in your court ~ c'est à toi de jouer, de décider ~ I've made my offer: the ball is in your court.
+to kill two birds with one stone ~ faire d'une pierre deux coups ~ I'll visit her while I'm in town and kill two birds with one stone.
+better late than never ~ mieux vaut tard que jamais ~ You came, and better late than never!
+over the moon ~ aux anges ~ She was over the moon about her results.
+to be fed up ~ en avoir assez ~ I'm fed up with this noise. ~ fed up
+to get cold feet ~ avoir un coup de trac, se dégonfler ~ He got cold feet on the day of the wedding. ~ got cold feet
+to cut corners ~ bâcler, prendre des raccourcis ~ Never cut corners on safety.
+to go the extra mile ~ faire un effort supplémentaire ~ She always goes the extra mile for her students. ~ goes the extra mile
+a blessing in disguise ~ un mal pour un bien ~ Losing that job was a blessing in disguise.
+to come up with ~ trouver (une idée) ~ We need to come up with a plan.
+to cut down on ~ réduire (sa consommation) ~ I'm trying to cut down on sugar.
+to deal with ~ s'occuper de, gérer ~ How do you deal with stress?
+to end up ~ finir par, se retrouver ~ We ended up eating at home. ~ ended up
+to fall apart ~ s'effondrer, tomber en morceaux ~ The plan fell apart. ~ fell apart
+to get over ~ se remettre de ~ It took her months to get over the flu.
+to give in ~ céder ~ He finally gave in. ~ gave in
+to go ahead ~ aller de l'avant, commencer ~ Go ahead, I'm listening. ~ Go ahead
+to hold on ~ patienter, tenir bon ~ Hold on, I'll be right back. ~ Hold on
+to look forward to ~ avoir hâte de ~ I look forward to seeing you. ~ look forward to
+to make up ~ inventer ; se réconcilier ~ She made up an excuse. ~ made up
+to pick up ~ ramasser ; aller chercher ~ I'll pick you up at six. ~ pick you up
+to point out ~ faire remarquer ~ He pointed out a mistake. ~ pointed out
+to put up with ~ supporter ~ I can't put up with this noise.
+to sort out ~ régler, trier ~ We need to sort out the problem. ~ sort out
+to take up ~ se mettre à (une activité) ~ He took up surfing last year. ~ took up
+to turn down ~ refuser ; baisser (le volume) ~ She turned down the job offer. ~ turned down
+to show up ~ se présenter, arriver ~ He didn't show up. ~ show up
+`);
+})();
+
 
 const $ = s => document.querySelector(s);
 function h(tag, props, ...kids){
@@ -1921,7 +2153,7 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
-const APP_VERSION='135f2e53', APP_DATE='02/11/2026';
+const APP_VERSION='a9efa313', APP_DATE='02/11/2026';
 (function(){
   const b = document.getElementById('ver'); if (!b) return;
   const label = (x) => { b.textContent = x; };
