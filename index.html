@@ -158,7 +158,7 @@ td:first-child{font-weight:600;white-space:nowrap}
   <header>
     <div class="topline"><div class="eyebrow">Révision · 4 fiches</div><button type="button" class="ver" id="ver" aria-live="polite"></button></div>
     <h1>Exercices d'anglais</h1>
-    <p class="lead">Vocabulaire de tes fiches TEDx, thèse et 1000 mots, exercices sur les temps et les verbes, et suivi de tes progrès. Les questions déjà vues reviennent en dernier, tes erreurs reviennent en premier.</p>
+    <p class="lead" id="lead"></p>
   </header>
   <nav class="nav" id="nav" aria-label="Sections"></nav>
   <p class="sync" id="sync"></p>
@@ -2153,7 +2153,14 @@ function showResult(){
   card.append(row); box.append(card); show('result');
 }
 
-const APP_VERSION='a9efa313', APP_DATE='02/11/2026';
+const APP_VERSION='8e70e1ca', APP_DATE='02/11/2026';
+(function(){
+  const sum = f => DECKS.filter(f).reduce((n, d) => n + d.items.length, 0);
+  const words = sum(d => (d.section || 'vocab') === 'vocab' && (!d.kind || d.kind === 'vocab'));
+  const verbs = sum(d => d.kind === 'verbs'), phrases = sum(d => d.section === 'tv' && d.kind === 'conj' && !d.mix);
+  const el = document.getElementById('lead');
+  if (el) el.textContent = words + ' mots et expressions de vocabulaire, ' + verbs + ' verbes irréguliers, ' + phrases + ' phrases à compléter sur les temps, des exercices sur les mots de liaison et le suivi de tes progrès. Les questions déjà vues reviennent en dernier, tes erreurs reviennent en premier.';
+})();
 (function(){
   const b = document.getElementById('ver'); if (!b) return;
   const label = (x) => { b.textContent = x; };
